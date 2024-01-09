@@ -1,0 +1,43 @@
+name: Docs
+on:
+  push:
+    branches:
+      - '20[0-9][0-9]-[0-1][0-9]'
+    tags:
+      - '20[0-9][0-9]-[0-1][0-9]'
+env:
+  GKSwstype: 100
+jobs:
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/cache@v1
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: '1'
+      - run: |
+          # Install Python dependencies
+          set -x
+          /usr/bin/python3 -m pip install zip-files
+      - name: Instantiate
+        run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
+      - name: "Build documentation"
+        run: julia --project=. docs/make.jl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - name: Zip the HTML documentation
+        run: zip-folder --debug --auto-root --outfile "docs.zip" docs/build
+      - uses: actions/upload-artifact@v3
+        name: Upload documentation artifacts
+        with:
+          name: QuantumControlExample
+          # We need at least two files in the artifact to avoid a weird
+          # double-zip file. Hence README.md
+          path: |
+            README.md
+            ./docs.zip

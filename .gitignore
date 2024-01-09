@@ -1,0 +1,11 @@
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+/test/LocalPreferences.toml
+/docs/LocalPreferences.toml
+/docs/Project.toml
+/docs/build/
+/gh-pages/
+/.vscode/
+/lcov.info
+/coverage

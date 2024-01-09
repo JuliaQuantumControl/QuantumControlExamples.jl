@@ -1,0 +1,6 @@
+/test.jl
+*.png
+*.jld2
+*.ipynb
+*.md
+*.log
