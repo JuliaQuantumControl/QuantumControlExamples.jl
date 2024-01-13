@@ -1,0 +1,7 @@
+title = "Pulse Parametrization for Krotov's Method"
+tags = ["krotov", "optimization"]
+author = "Michael Goerz"
+file = "krotov_pulse_parametrization.jl"
+deploy = ["*.png"]
+assets = ["plots"]
+order = 101

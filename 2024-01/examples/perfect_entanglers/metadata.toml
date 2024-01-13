@@ -1,0 +1,6 @@
+title = "Entangling quantum gates for coupled transmon qubits"
+tags = ["grape", "optimization", "quantum computing"]
+author = "Michael Goerz"
+file = "perfect_entanglers.jl"
+deploy = ["*.png"]
+order = 102
