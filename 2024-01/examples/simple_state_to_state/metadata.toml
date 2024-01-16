@@ -4,3 +4,4 @@ author = "Michael Goerz"
 file = "simple_state_to_state.jl"
 deploy = ["*.png"]
 order = 101
+threads = 1

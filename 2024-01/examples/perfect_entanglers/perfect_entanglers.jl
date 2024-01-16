@@ -41,7 +41,7 @@
 #md import DisplayAs #hide
 
 datadir(names...) = joinpath(@__DIR__, names...);
-#jl using Test; println("")
+using Test #src
 
 # This example illustrates the optimization towards a perfectly entangling
 # two-qubit gate for a system of two transmon qubits with a shared transmission
@@ -208,7 +208,7 @@ end
 
 fig = plot_complex_pulse(tlist, Array(Ωre_guess) .+ 𝕚 .* Array(Ωim_guess))
 #md fig |> DisplayAs.PNG #hide
-#jl display(fig)
+display(fig) #src
 
 # We now instantiate the Hamiltonian with these control fields:
 
@@ -333,7 +333,7 @@ opt_result
 
 fig = plot_complex_pulse(tlist, Ω_opt)
 #md fig |> DisplayAs.PNG #hide
-#jl display(fig)
+display(fig) #src
 
 # We then propagate the optimized control field to analyze the resulting
 # quantum gate:
@@ -395,7 +395,7 @@ J_T_PE = gate_functional(D_PE; unitarity_weight=0.5);
 
 gate_concurrence(U_guess)
 
-#jl @test gate_concurrence(U_guess) < 0.9
+@test gate_concurrence(U_guess) < 0.9 #src
 
 # We find that the guess pulse produces a gate in the `W0*` region of the Weyl
 # chamber:
@@ -403,7 +403,7 @@ gate_concurrence(U_guess)
 using TwoQubitWeylChamber: weyl_chamber_region
 weyl_chamber_region(U_guess)
 
-#jl @test weyl_chamber_region(U_guess) == "W0*"
+@test weyl_chamber_region(U_guess) == "W0*" #src
 
 # That is, the region of the Weyl chamber containing controlled-phase gates with
 # a phase $> π$ (Weyl chamber coordinates $c₁ > π/2$, $c₂ < π/4$).
@@ -426,7 +426,7 @@ weyl_chamber_region(U_guess)
 
 1 - unitarity(U_guess)
 
-#jl @test round(1 - unitarity(U_guess), digits=1) ≈ 0.1
+@test round(1 - unitarity(U_guess), digits=1) ≈ 0.1 #src
 
 # We can also evaluate the geometric distance to the polyhedron of perfect
 # entanglers in the Weyl chamber:
@@ -440,8 +440,9 @@ D_PE(U_guess)
 #-
 J_T_PE(guess_states, objectives)
 
-#jl @test 0.4 < J_T_PE(guess_states, objectives) < 0.5
-#jl @test 0.5 * D_PE(U_guess) + 0.5 * (1-unitarity(U_guess)) ≈ J_T_PE(guess_states, objectives) atol=1e-15
+@test 0.4 < J_T_PE(guess_states, objectives) < 0.5 #src
+@test 0.5 * D_PE(U_guess) + 0.5 * (1 - unitarity(U_guess)) ≈ #src
+      J_T_PE(guess_states, objectives) atol = 1e-15  #src
 
 
 # For the standard functional `J_T_sm` used in the previous section, our GRAPE
@@ -489,6 +490,7 @@ problem = ControlProblem(
 
 # With this, we can easily find a solution to the control problem:
 
+optimize(problem; method=:GRAPE, iter_stop=1) # compile #src
 opt_result = @optimize_or_load(datadir("GRAPE_PE_OCT.jld2"), problem; method=:GRAPE);
 #-
 opt_result
@@ -502,7 +504,7 @@ opt_result
 
 fig = plot_complex_pulse(tlist, Ω_opt)
 #md fig |> DisplayAs.PNG #hide
-#jl display(fig)
+display(fig) #src
 
 # We then propagate the optimized control field to analyze the resulting
 # quantum gate:
@@ -522,13 +524,13 @@ U_opt = [basis[i] ⋅ opt_states[j] for i = 1:4, j = 1:4];
 # We find that we have achieved a perfect entangler:
 
 gate_concurrence(U_opt)
-#jl @test round(gate_concurrence(U_opt), digits=3) ≈ 1.0
+@test round(gate_concurrence(U_opt), digits=3) ≈ 1.0 #src
 
 # Moreover, we have reduced the population loss to less than 4%
 
 1 - unitarity(U_opt)
 
-#jl @test 1 - unitarity(U_opt) < 0.04
+@test 1 - unitarity(U_opt) < 0.04 #src
 
 
 # ## Direct maximization of the gate concurrence
@@ -557,6 +559,13 @@ J_T_C(U) = 0.5 * (1 - gate_concurrence(U)) + 0.5 * (1 - unitarity(U));
 
 # Running this, we again are able to find a perfect entangler.
 
+optimize( # compile #src
+    problem; #src
+    method=:GRAPE, #src
+    J_T=gate_functional(J_T_C), #src
+    chi=make_gate_chi(J_T_C, objectives), #src
+    iter_stop=1 #src
+) #src
 opt_result_direct = @optimize_or_load(
     datadir("GRAPE_PE_OCT_direct.jld2"),
     problem;
@@ -580,7 +589,7 @@ opt_states_direct = propagate_objectives(
 U_opt_direct = [basis[i] ⋅ opt_states_direct[j] for i = 1:4, j = 1:4];
 #-
 gate_concurrence(U_opt_direct)
-#jl @test round(gate_concurrence(U_opt_direct), digits=3) ≈ 1.0
+@test round(gate_concurrence(U_opt_direct), digits=3) ≈ 1.0 #src
 #-
 1 - unitarity(U_opt_direct)
-#jl @test round(1 - unitarity(U_opt_direct), digits=3) ≈ 0.001
+@test round(1 - unitarity(U_opt_direct), digits=3) ≈ 0.001 #src

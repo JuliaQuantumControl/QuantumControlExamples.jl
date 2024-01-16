@@ -40,8 +40,8 @@ end
 fig = plot_amplitude(ϵ, tlist)</code></pre><p><img src="krotov_pulse_parametrization-21.png" alt/></p><h2 id="Optimization-target"><a class="docs-heading-anchor" href="#Optimization-target">Optimization target</a><a id="Optimization-target-1"></a><a class="docs-heading-anchor-permalink" href="#Optimization-target" title="Permalink"></a></h2><p>The <code>krotov</code> package requires the goal of the optimization to be described by a list of <code>Objective</code> instances. In this example, there is only a single objective: the state-to-state transfer from initial state <span>$\ket{\Psi_{\init}} = \ket{0}$</span> to the target state <span>$\ket{\Psi_{\tgt}} = \ket{1}$</span>, under the dynamics of the Hamiltonian <span>$\op{H}(t)$</span>:</p><pre><code class="language-julia hljs">function ket(label)
     result = Dict(&quot;0&quot; =&gt; Vector{ComplexF64}([1, 0]), &quot;1&quot; =&gt; Vector{ComplexF64}([0, 1]),)
     return result[string(label)]
-end;</code></pre><pre><code class="language-julia hljs">objectives = [Objective(initial_state=ket(0), generator=H, target_state=ket(1))]</code></pre><pre><code class="nohighlight hljs">1-element Vector{QuantumControlBase.Objective{Vector{ComplexF64}, QuantumPropagators.Generators.Generator{Matrix{ComplexF64}, typeof(Main.var&quot;##233&quot;.ϵ)}}}:
- Objective{Vector{ComplexF64}, QuantumPropagators.Generators.Generator{Matrix{ComplexF64}, typeof(Main.var&quot;##233&quot;.ϵ)}}(…)</code></pre><h2 id="Square-parametrization-for-positive-pulses"><a class="docs-heading-anchor" href="#Square-parametrization-for-positive-pulses">Square-parametrization for positive pulses</a><a id="Square-parametrization-for-positive-pulses-1"></a><a class="docs-heading-anchor-permalink" href="#Square-parametrization-for-positive-pulses" title="Permalink"></a></h2><pre><code class="language-julia hljs">a = ParametrizedAmplitude(
+end;</code></pre><pre><code class="language-julia hljs">objectives = [Objective(initial_state=ket(0), generator=H, target_state=ket(1))]</code></pre><pre><code class="nohighlight hljs">1-element Vector{QuantumControlBase.Objective{Vector{ComplexF64}, QuantumPropagators.Generators.Generator{Matrix{ComplexF64}, typeof(Main.var&quot;##225&quot;.ϵ)}}}:
+ Objective{Vector{ComplexF64}, QuantumPropagators.Generators.Generator{Matrix{ComplexF64}, typeof(Main.var&quot;##225&quot;.ϵ)}}(…)</code></pre><h2 id="Square-parametrization-for-positive-pulses"><a class="docs-heading-anchor" href="#Square-parametrization-for-positive-pulses">Square-parametrization for positive pulses</a><a id="Square-parametrization-for-positive-pulses-1"></a><a class="docs-heading-anchor-permalink" href="#Square-parametrization-for-positive-pulses" title="Permalink"></a></h2><pre><code class="language-julia hljs">a = ParametrizedAmplitude(
     ϵ,
     tlist;
     parametrization=SquareParametrization(),
@@ -73,12 +73,12 @@ fig = plot_amplitude(a, tlist)</code></pre><p><img src="krotov_pulse_parametriza
     method=:krotov
 );</code></pre><pre><code class="language-julia hljs">opt_result_positive</code></pre><pre><code class="nohighlight hljs">Krotov Optimization Result
 --------------------------
-- Started at 2024-01-13T16:57:53.177
+- Started at 2024-01-14T21:29:04.844
 - Number of objectives: 1
 - Number of iterations: 50
 - Value of functional: 3.53585e-02
 - Reason for termination: Reached maximum number of iterations
-- Ended at 2024-01-13T16:57:56.765 (3 seconds, 588 milliseconds)
+- Ended at 2024-01-14T21:29:12.081 (7 seconds, 237 milliseconds)
 </code></pre><p>We can plot the optimized field:</p><pre><code class="language-julia hljs">fig = plot_amplitude(
     substitute(a, IdDict(a.control =&gt; opt_result_positive.optimized_controls[1])),
     tlist
@@ -106,12 +106,12 @@ problem_tanhsq = ControlProblem(
     method=:krotov
 );</code></pre><pre><code class="language-julia hljs">opt_result_tanhsq</code></pre><pre><code class="nohighlight hljs">Krotov Optimization Result
 --------------------------
-- Started at 2024-01-13T16:57:58.306
+- Started at 2024-01-14T21:29:15.064
 - Number of objectives: 1
 - Number of iterations: 50
 - Value of functional: 6.69321e-02
 - Reason for termination: Reached maximum number of iterations
-- Ended at 2024-01-13T16:57:58.786 (480 milliseconds)
+- Ended at 2024-01-14T21:29:15.599 (535 milliseconds)
 </code></pre><p>We can plot the optimized field:</p><pre><code class="language-julia hljs">fig = plot_amplitude(
     substitute(a, IdDict(a.control =&gt; opt_result_tanhsq.optimized_controls[1])),
     tlist
@@ -165,4 +165,4 @@ problem_tanh = ControlProblem(
 );</code></pre><pre><code class="language-julia hljs">fig = plot_amplitude(
     substitute(a, IdDict(a.control =&gt; opt_result_tanh.optimized_controls[1])),
     tlist
-)</code></pre><p><img src="krotov_pulse_parametrization-48.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« List of Tutorials</a><a class="docs-footer-nextpage" href="../../examples/">List of Examples »</a><div class="flexbox-break"></div><p class="footer-message"><a href="https://github.com/JuliaQuantumControl/QuantumControlExamples.jl">JuliaQuantumControl Tutorials and Examples</a> powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Sunday 14 January 2024 02:54">Sunday 14 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+)</code></pre><p><img src="krotov_pulse_parametrization-48.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« List of Tutorials</a><a class="docs-footer-nextpage" href="../../examples/">List of Examples »</a><div class="flexbox-break"></div><p class="footer-message"><a href="https://github.com/JuliaQuantumControl/QuantumControlExamples.jl">JuliaQuantumControl Tutorials and Examples</a> powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Tuesday 16 January 2024 20:58">Tuesday 16 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

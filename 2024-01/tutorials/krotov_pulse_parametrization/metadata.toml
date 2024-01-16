@@ -4,4 +4,5 @@ author = "Michael Goerz"
 file = "krotov_pulse_parametrization.jl"
 deploy = ["*.png"]
 assets = ["plots"]
+threads = 1
 order = 101

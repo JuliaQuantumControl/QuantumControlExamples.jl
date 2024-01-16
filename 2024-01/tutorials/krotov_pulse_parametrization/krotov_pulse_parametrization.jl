@@ -57,7 +57,7 @@ using QuantumPropagators: ExpProp
 using LinearAlgebra
 
 #-
-#jl using Test; println("")
+using Test #src
 using Plots
 Plots.default(
     linewidth               = 3,
@@ -76,7 +76,7 @@ Plots.default(
 include(joinpath(@__DIR__, "plots", "symmetric_parametrization_comparison.jl"))  # hide
 fig = plot_symmetric_parametrization_comparison()  # hide
 #md fig |> DisplayAs.PNG #hide
-#jl display(fig)
+display(fig) #src
 
 # ## Positive (Bounded) Controls
 
@@ -84,7 +84,7 @@ fig = plot_symmetric_parametrization_comparison()  # hide
 include(joinpath(@__DIR__, "plots", "positive_parametrization_comparison.jl"))  # hide
 fig = plot_positive_parametrization_comparison()  # hide
 #md fig |> DisplayAs.PNG #hide
-#jl display(fig)
+display(fig) #src
 
 # ## Two-level Hamiltonian
 
@@ -118,7 +118,7 @@ end;
 #-
 
 H = tls_hamiltonian();
-#jl @test length(H.ops) == 2
+@test length(H.ops) == 2 #src
 
 # The control field here switches on from zero at $t=0$ to it's maximum amplitude
 # 0.2 within the time period 0.3 (the switch-on shape is half a [Blackman pulse](https://en.wikipedia.org/wiki/Window_function#Blackman_window)).
@@ -136,7 +136,7 @@ end
 
 fig = plot_amplitude(ϵ, tlist)
 #md fig |> DisplayAs.PNG #hide
-#jl display(fig)
+display(fig) #src
 
 # ## Optimization target
 
@@ -152,13 +152,13 @@ function ket(label)
 end;
 
 #-
-#jl @test dot(ket(0), ket(1)) ≈ 0
+@test dot(ket(0), ket(1)) ≈ 0 #src
 #-
 
 objectives = [Objective(initial_state=ket(0), generator=H, target_state=ket(1))]
 
 #-
-#jl @test length(objectives) == 1
+@test length(objectives) == 1 #src
 #-
 
 
@@ -184,7 +184,7 @@ end
 
 fig = plot_amplitude(a, tlist)
 #md fig |> DisplayAs.PNG #hide
-#jl display(fig)
+display(fig) #src
 
 #-
 problem = ControlProblem(
@@ -211,18 +211,20 @@ opt_result_positive
 # We can plot the optimized field:
 
 #-
-#!jl fig = plot_amplitude(
-#!jl     substitute(a, IdDict(a.control => opt_result_positive.optimized_controls[1])),
-#!jl     tlist
-#!jl )
+fig = plot_amplitude(
+    substitute(a, IdDict(a.control => opt_result_positive.optimized_controls[1])),
+    tlist
+)
+display(fig) #src
 #md fig |> DisplayAs.PNG #hide
 #-
 
 #-
-#jl amplitude = Array(substitute(a, IdDict(a.control => opt_result_positive.optimized_controls[1])))
-#jl @test minimum(amplitude) ≥ 0.0
-#jl @test minimum(amplitude) < 1e-16
-#jl @test maximum(amplitude) > 0.0
+amplitude = #src
+    Array(substitute(a, IdDict(a.control => opt_result_positive.optimized_controls[1]))) #src
+@test minimum(amplitude) ≥ 0.0 #src
+@test minimum(amplitude) < 1e-16 #src
+@test maximum(amplitude) > 0.0 #src
 #-
 
 # ## Tanh-Square-Parametrization for positive amplitude-constrained pulses
@@ -258,19 +260,21 @@ opt_result_tanhsq
 # We can plot the optimized field:
 
 #-
-#!jl fig = plot_amplitude(
-#!jl     substitute(a, IdDict(a.control => opt_result_tanhsq.optimized_controls[1])),
-#!jl     tlist
-#!jl )
+fig = plot_amplitude(
+    substitute(a, IdDict(a.control => opt_result_tanhsq.optimized_controls[1])),
+    tlist
+)
+display(fig) #src
 #md fig |> DisplayAs.PNG #hide
 #-
 
 #-
-#jl amplitude = Array(substitute(a, IdDict(a.control => opt_result_tanhsq.optimized_controls[1])))
-#jl @test minimum(amplitude) ≥ 0.0
-#jl @test minimum(amplitude) < 1e-16
-#jl @test maximum(amplitude) > 0.0
-#jl @test maximum(opt_result_tanhsq.optimized_controls[1]) < 3.0
+amplitude = #src
+    Array(substitute(a, IdDict(a.control => opt_result_tanhsq.optimized_controls[1]))) #src
+@test minimum(amplitude) ≥ 0.0 #src
+@test minimum(amplitude) < 1e-16 #src
+@test maximum(amplitude) > 0.0 #src
+@test maximum(opt_result_tanhsq.optimized_controls[1]) < 3.0 #src
 #-
 
 # ## Logistic-Square-Parametrization for positive amplitude-constrained pulses
@@ -303,19 +307,21 @@ opt_result_logisticsq = @optimize_or_load(
 # We can plot the optimized field:
 
 #-
-#!jl fig = plot_amplitude(
-#!jl     substitute(a, IdDict(a.control => opt_result_logisticsq.optimized_controls[1])),
-#!jl     tlist
-#!jl )
+fig = plot_amplitude(
+    substitute(a, IdDict(a.control => opt_result_logisticsq.optimized_controls[1])),
+    tlist
+)
+display(fig) #src
 #md fig |> DisplayAs.PNG #hide
 #-
 
 #-
-#jl amplitude = Array(substitute(a, IdDict(a.control => opt_result_logisticsq.optimized_controls[1])))
-#jl @test minimum(amplitude) ≥ 0.0
-#jl @test minimum(amplitude) < 1e-16
-#jl @test maximum(amplitude) > 0.0
-#jl @test maximum(amplitude) < 3.0
+amplitude = #src
+    Array(substitute(a, IdDict(a.control => opt_result_logisticsq.optimized_controls[1]))) #src
+@test minimum(amplitude) ≥ 0.0 #src
+@test minimum(amplitude) < 1e-16 #src
+@test maximum(amplitude) > 0.0 #src
+@test maximum(amplitude) < 3.0 #src
 #-
 # ## Tanh-parametrization for amplitude-constrained pulses
 
@@ -345,13 +351,13 @@ opt_result_tanh = @optimize_or_load(
     method=:krotov
 );
 #-
-#!jl fig = plot_amplitude(
-#!jl     substitute(a, IdDict(a.control => opt_result_tanh.optimized_controls[1])),
-#!jl     tlist
-#!jl )
+fig = plot_amplitude(
+    substitute(a, IdDict(a.control => opt_result_tanh.optimized_controls[1])),
+    tlist
+)
+display(fig) #src
 #md fig |> DisplayAs.PNG #hide
 #-
-#jl amplitude = Array(substitute(a, IdDict(a.control => opt_result_tanh.optimized_controls[1])))
-#jl @test minimum(amplitude) > -0.5
-#jl @test maximum(amplitude) < 0.5
-#-
+amplitude = Array(substitute(a, IdDict(a.control => opt_result_tanh.optimized_controls[1]))) #src
+@test minimum(amplitude) > -0.5 #src
+@test maximum(amplitude) < 0.5 #src
