@@ -61,7 +61,11 @@ function get_versions()
     if isempty(folders)
         return nothing
     else
-        return ["latest" => folders[begin], [(v => v) for v in folders]...]
+        return [
+            "dev" => folders[begin],
+            "stable" => folders[begin],
+            [(v => v) for v in folders]...
+        ]
     end
 end
 
@@ -70,6 +74,7 @@ end
 deploydocs(;
     repo="github.com/JuliaQuantumControl/QuantumControlExamples.jl",
     devbranch="master",
+    devurl="master",
     deploy_config=CustomDeployConfig(),
     versions=get_versions(),
 )
