@@ -1,6 +1,6 @@
 var DOC_VERSIONS = [
   "dev",
-  "latest",
+  "stable",
   "2024-01",
 ];
 var DOCUMENTER_NEWEST = "2024-01";
