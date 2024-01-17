@@ -21,6 +21,7 @@ EXAMPLES = [
     example["title"] => joinpath("examples", splitext(example["file"])[1], "index.md")
     for (_, example) in collect_examples(joinpath(@__DIR__, "src", "examples"))
 ]
+@show EXAMPLES
 
 mkpath(joinpath(@__DIR__, "src", "tutorials"))
 TUTORIALS = [
@@ -28,6 +29,7 @@ TUTORIALS = [
         joinpath("tutorials", splitext(tutorial["file"])[1], "index.md") for
     (_, tutorial) in collect_examples(joinpath(@__DIR__, "src", "tutorials"))
 ]
+@show TUTORIALS
 
 PAGES = [
     "Home" => "index.md",

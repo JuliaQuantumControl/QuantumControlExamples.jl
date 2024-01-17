@@ -1,4 +1,4 @@
-.PHONY: help test docs clean distclean devrepl codestyle servedocs
+.PHONY: help all deploy test docs clean distclean devrepl codestyle servedocs
 .DEFAULT_GOAL := help
 
 JULIA ?= julia
@@ -23,10 +23,14 @@ help:  ## show this help
 	@julia -e "$$PRINT_HELP_JLSCRIPT" < $(MAKEFILE_LIST)
 
 
-all: Manifest.toml ## execute all tests and deploy to the docs folder
+all: Manifest.toml ## execute all examples and deploy to the docs folder
 	$(JULIA) --project=. --banner=no --startup-file=no -e 'using QuantumControlExamples; QuantumControlExamples.run_examples("examples")'
 	$(JULIA) --project=. --banner=no --startup-file=no -e 'using QuantumControlExamples; QuantumControlExamples.deploy_examples("examples")'
 	$(JULIA) --project=. --banner=no --startup-file=no -e 'using QuantumControlExamples; QuantumControlExamples.run_examples("tutorials")'
+	$(JULIA) --project=. --banner=no --startup-file=no -e 'using QuantumControlExamples; QuantumControlExamples.deploy_examples("tutorials")'
+
+deploy: Manifest.toml ## deploy all run examples to the docs folder
+	$(JULIA) --project=. --banner=no --startup-file=no -e 'using QuantumControlExamples; QuantumControlExamples.deploy_examples("examples")'
 	$(JULIA) --project=. --banner=no --startup-file=no -e 'using QuantumControlExamples; QuantumControlExamples.deploy_examples("tutorials")'
 
 test:  Manifest.toml ## Run the test suite

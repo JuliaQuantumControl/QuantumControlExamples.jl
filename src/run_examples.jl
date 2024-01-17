@@ -8,6 +8,7 @@ function _script_run_test(folder; quiet=false)
         logfile = splitext(file)[1] * ".log"
         script = """
         ENV["GKSwstype"] = "100"
+        ENV["JULIA_CAPTURE_COLOR"] = "0"
         using Plots
         using TOML
         using Test
@@ -30,6 +31,7 @@ function _script_run_test(folder; quiet=false)
     else
         script = """
         ENV["GKSwstype"] = "100"
+        ENV["JULIA_CAPTURE_COLOR"] = "0"
         using Plots
         using TOML
         using Test
@@ -52,6 +54,7 @@ function _script_run_markdown(folder)
     example = TOML.parsefile(joinpath(folder, "metadata.toml"))
     script = """
     ENV["GKSwstype"] = "100"
+    ENV["JULIA_CAPTURE_COLOR"] = "0"
     using Literate
     cd($(repr(folder))) do
         Literate.markdown(
@@ -68,6 +71,7 @@ function _script_run_notebook(folder)
     example = TOML.parsefile(joinpath(folder, "metadata.toml"))
     script = """
     ENV["GKSwstype"] = "100"
+    ENV["JULIA_CAPTURE_COLOR"] = "0"
     using Literate
     cd($(repr(folder))) do
         Literate.notebook(
@@ -133,7 +137,7 @@ function run_example(
         end
     end
     if run_notebook
-        nbfile = splitext(file)[1] * ".md"
+        nbfile = splitext(file)[1] * ".ipynb"
         if mtime(nbfile) > mtime(file)
             @info "skip converting `$(_shrinkuser(file))` to .ipynb file (up to date)."
         else

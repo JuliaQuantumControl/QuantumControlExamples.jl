@@ -5,7 +5,7 @@ using TOML
 function clean_example(folder::AbstractString)
     cd(folder) do
         example = TOML.parsefile("metadata.toml")
-        for name in readdir(folder; join=false, sort=false)
+        for name in readdir("."; join=false, sort=false)
             (name == ".gitignore") && continue
             (name == "metadata.toml") && continue
             (name == example["file"]) && continue
@@ -13,9 +13,8 @@ function clean_example(folder::AbstractString)
             # Note that `assets` are not glob patterns. This is because this
             # file must run in a plain Julia environment and can't use the Glob
             # dependency.
-            path = joinpath(folder, name)
-            println("rm $path")
-            rm(path; recursive=true)
+            println("rm $(joinpath(folder, name))")
+            rm(name; recursive=true)
         end
     end
 end
