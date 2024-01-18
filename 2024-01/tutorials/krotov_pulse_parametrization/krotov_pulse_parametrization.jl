@@ -73,16 +73,16 @@ Plots.default(
 # ## Symmetric Bounded Controls
 
 #-
-include(joinpath(@__DIR__, "plots", "symmetric_parametrization_comparison.jl"))  # hide
-fig = plot_symmetric_parametrization_comparison()  # hide
+include(joinpath(@__DIR__, "plots", "symmetric_parametrization_comparison.jl"))  #hide
+fig = plot_symmetric_parametrization_comparison()  #hide
 #md fig |> DisplayAs.PNG #hide
 display(fig) #src
 
 # ## Positive (Bounded) Controls
 
 #-
-include(joinpath(@__DIR__, "plots", "positive_parametrization_comparison.jl"))  # hide
-fig = plot_positive_parametrization_comparison()  # hide
+include(joinpath(@__DIR__, "plots", "positive_parametrization_comparison.jl"))  #hide
+fig = plot_positive_parametrization_comparison()  #hide
 #md fig |> DisplayAs.PNG #hide
 display(fig) #src
 
