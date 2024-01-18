@@ -294,4 +294,6 @@ opt_result = @optimize_or_load(
     problem,
     method = :krotov,
 )
+nothing #hide
 #-
+opt_result #hide
