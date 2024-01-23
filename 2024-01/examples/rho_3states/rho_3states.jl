@@ -293,7 +293,7 @@ using Krotov
 opt_result = @optimize_or_load(
     datadir("DissGateOCT#J_T=J_T_re#iter_stop=3000#method=krotov.jld2"),
     problem,
-    method=Krotov,
+    method = Krotov,
 )
 nothing #hide
 #-

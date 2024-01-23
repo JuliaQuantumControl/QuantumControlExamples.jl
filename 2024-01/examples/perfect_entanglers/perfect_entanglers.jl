@@ -213,6 +213,7 @@ display(fig) #src
 # We now instantiate the Hamiltonian with these control fields:
 
 H = transmon_hamiltonian(Ωre=Ωre_guess, Ωim=Ωim_guess)
+#md H |> DisplayAs.withcontext(:limit => true) #hide
 
 # ## Logical basis for two-qubit gates
 
@@ -310,13 +311,15 @@ problem = ControlProblem(
     end,
     prop_method=Cheby,
     use_threads=true,
-);
+)
+#md problem |> DisplayAs.withcontext(:limit => true) #hide
 
 #-
 using GRAPE
-opt_result = @optimize_or_load(datadir("GRAPE_GATE_OCT.jld2"), problem; method=GRAPE);
+opt_result = @optimize_or_load(datadir("GRAPE_GATE_OCT.jld2"), problem; method=GRAPE)
+nothing #hide
 #-
-opt_result
+#md opt_result |> DisplayAs.withcontext(:limit => true) #hide
 
 # We extract the optimized control field from the optimization result and plot
 # the resulting amplitude.
@@ -488,14 +491,16 @@ problem = ControlProblem(
         )
     end,
     use_threads=true,
-);
+)
+#md problem |> DisplayAs.withcontext(:limit => true) #hide
 
 # With this, we can easily find a solution to the control problem:
 
 optimize(problem; method=GRAPE, iter_stop=1) # compile #src
-opt_result = @optimize_or_load(datadir("GRAPE_PE_OCT.jld2"), problem; method=GRAPE);
+opt_result = @optimize_or_load(datadir("GRAPE_PE_OCT.jld2"), problem; method=GRAPE)
+nothing #hide
 #-
-opt_result
+#md opt_result |> DisplayAs.withcontext(:limit => true) #hide
 
 
 # We extract the optimized control field from the optimization result and plot
@@ -575,8 +580,9 @@ opt_result_direct = @optimize_or_load(
     J_T=gate_functional(J_T_C),
     chi=make_gate_chi(J_T_C, trajectories)
 );
+nothing #hide
 #-
-opt_result_direct
+#md opt_result_direct |> DisplayAs.withcontext(:limit => true) #hide
 #-
 opt_states_direct = propagate_trajectories(
     substitute(
