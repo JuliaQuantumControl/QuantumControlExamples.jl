@@ -170,6 +170,8 @@ display(fig) #src
 
 # The GRAPE package performs the optimization by calculating the gradient of $J_T$ with respect to the values of the control field at each point in time. This gradient is then fed into a backend solver that calculates an appropriate update based on that gradient.
 
+using GRAPE
+
 # By default, this backend is [LBFGSB.jl](https://github.com/Gnimuc/LBFGSB.jl), a wrapper around the true and tested [L-BFGS-B Fortran library](http://users.iems.northwestern.edu/%7Enocedal/lbfgsb.html). L-BFGS-B is a pseudo-Hessian method: it efficiently estimates the second-order Hessian from the gradient information. The search direction determined from that Hessian dramatically improves convergence compared to using the gradient directly as a search direction. The L-BFGS-B method performs its own linesearch to determine how far to go in the search direction.
 
 # It can be quite instructive to see how the improvement in the pseudo-Hessian search direction compares to the gradient, how the linesearch finds an appropriate step width. For this purpose, we have a [GRAPELinesearchAnalysis](https://github.com/JuliaQuantumControl/GRAPELinesearchAnalysis.jl) package that automatically generates plots in every iteration of the optimization showing the linesearch behavior
@@ -178,7 +180,6 @@ using GRAPELinesearchAnalysis
 
 # We feed this into the optimization as part of the `info_hook`.
 
-using GRAPE
 opt_result_LBFGSB = @optimize_or_load(
     datadir("TLS", "GRAPE_opt_result_LBFGSB.jld2"),
     problem;
@@ -187,7 +188,7 @@ opt_result_LBFGSB = @optimize_or_load(
     info_hook=(
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "LBFGSB")), #md
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "LBFGSB")), #nb
-        QuantumControl.GRAPE.print_table,
+        GRAPE.print_table,
     )
 );
 #-
@@ -245,7 +246,7 @@ opt_result_OptimLBFGS = @optimize_or_load(
     info_hook=(
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "OptimLBFGS")), #md
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "OptimLBFGS")), #nb
-        QuantumControl.GRAPE.print_table,
+        GRAPE.print_table,
     ),
     optimizer=Optim.LBFGS(;
         alphaguess=LineSearches.InitialStatic(alpha=0.2),

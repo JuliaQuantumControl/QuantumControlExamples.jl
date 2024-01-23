@@ -289,10 +289,11 @@ problem = ControlProblem(
     end
 );
 #-
+using Krotov
 opt_result = @optimize_or_load(
     datadir("DissGateOCT#J_T=J_T_re#iter_stop=3000#method=krotov.jld2"),
     problem,
-    method = :krotov,
+    method = Krotov,
 )
 nothing #hide
 #-
