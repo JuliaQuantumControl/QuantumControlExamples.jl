@@ -148,7 +148,7 @@ fig = plot_control(Ωre, tlist)
 display(fig) #src
 
 
-# ## Optimization objectives
+# ## Three-State Trajectories for Open System Gate Optimization
 
 # Our target gate is $\op{O} = \sqrt{\text{iSWAP}}$:
 
@@ -220,26 +220,26 @@ weights = Float64[20, 1, 1];
 weights *= length(weights) / sum(weights); # manual normalization
 weights ./= [0.3, 1.0, 0.25]; # purities
 
-const objectives = [
-    Objective(
+const trajectories = [
+    Trajectory(
         initial_state=reshape(ρ̂₁, :),
         generator=L,
         target_state=reshape(ρ̂₁_tgt, :),
         weight=weights[1]
     ),
-    Objective(
+    Trajectory(
         initial_state=reshape(ρ̂₂, :),
         generator=L,
         target_state=reshape(ρ̂₂_tgt, :),
         weight=weights[2]
     ),
-    Objective(
+    Trajectory(
         initial_state=reshape(ρ̂₃, :),
         generator=L,
         target_state=reshape(ρ̂₃_tgt, :),
         weight=weights[3]
     )
-];
+]
 
 
 # ## Dynamics under the Guess Pulse
@@ -262,8 +262,8 @@ pop11(ρ⃗) = real(tr(as_matrix(ρ⃗) * ρ̂₁₁));
 
 using QuantumPropagators: Newton
 
-rho_00_expvals = propagate_objective(
-    objectives[1],
+rho_00_expvals = propagate_trajectory(
+    trajectories[1],
     tlist;
     initial_state=reshape(ρ̂₀₀, :),
     method=Newton,
@@ -276,12 +276,12 @@ rho_00_expvals = propagate_objective(
 
 
 problem = ControlProblem(
-    objectives=objectives,
+    trajectories,
+    tlist;
     prop_method=Newton,
     use_threads=true,
     lambda_a=1.0,
     update_shape=(t -> QuantumControl.Shapes.flattop(t, T=T, t_rise=20ns, func=:blackman)),
-    tlist=tlist,
     iter_stop=3000,
     J_T=QuantumControl.Functionals.J_T_re,
     check_convergence=res -> begin

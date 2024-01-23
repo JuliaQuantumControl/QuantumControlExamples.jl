@@ -260,12 +260,12 @@ SQRTISWAP = [
 
 basis_tgt = transpose(SQRTISWAP) * basis;
 
-# The mapping from each initial (basis) state to the corresponding target state
-# constitutes an "objective" for the optimization:
+# The optimization aims to bring the dynamic trajectory of each basis
+# state to the corresponding target state:
 
 #-
-objectives = [
-    Objective(initial_state=Ψ, target_state=Ψtgt, generator=H) for
+trajectories = [
+    Trajectory(initial_state=Ψ, target_state=Ψtgt, generator=H) for
     (Ψ, Ψtgt) ∈ zip(basis, basis_tgt)
 ];
 
@@ -274,30 +274,30 @@ objectives = [
 
 using QuantumPropagators: Cheby
 
-guess_states = propagate_objectives(objectives, tlist; method=Cheby, use_threads=true);
+guess_states = propagate_trajectories(trajectories, tlist; method=Cheby, use_threads=true);
 
 # The gate implemented by the guess controls is
 
 U_guess = [basis[i] ⋅ guess_states[j] for i = 1:4, j = 1:4];
 
-# We will optimize these objectives with a square-modulus functional
+# We will optimize these trajectories with a square-modulus functional
 
 using QuantumControl.Functionals: J_T_sm
 
 # The initial value of the functional is
 
-J_T_sm(guess_states, objectives)
+J_T_sm(guess_states, trajectories)
 
 # which is the gate error
 
 1 - (abs(tr(U_guess' * SQRTISWAP)) / 4)^2
 
 # Now, we define the full optimization problems on top of the list of
-# objectives, and with the optimization functional:
+# trajectories, and with the optimization functional:
 
 problem = ControlProblem(
-    objectives=objectives,
-    tlist=tlist,
+    trajectories,
+    tlist;
     iter_stop=100,
     J_T=J_T_sm,
     check_convergence=res -> begin
@@ -314,7 +314,7 @@ problem = ControlProblem(
 
 #-
 
-opt_result = @optimize_or_load(datadir("GRAPE_GATE_OCT.jld2"), problem; method=:GRAPE);
+opt_result = @optimize_or_load(datadir("GRAPE_GATE_OCT.jld2"), problem; method=GRAPE);
 #-
 opt_result
 
@@ -340,10 +340,10 @@ display(fig) #src
 
 using QuantumControl.Controls: get_controls, substitute
 
-opt_states = propagate_objectives(
+opt_states = propagate_trajectories(
     substitute(
-        objectives,
-        IdDict(zip(get_controls(objectives), opt_result.optimized_controls))
+        trajectories,
+        IdDict(zip(get_controls(trajectories), opt_result.optimized_controls))
     ),
     tlist;
     method=Cheby,
@@ -361,10 +361,10 @@ U_opt = [basis[i] ⋅ opt_states[j] for i = 1:4, j = 1:4];
 
 # ## Optimizing for a general perfect entangler
 
-# We define the optimization with one objective for each of the four basis
+# We define the optimization with one trajectory for each of the four basis
 # states:
 
-objectives = [Objective(; initial_state=Ψ, generator=H) for Ψ ∈ basis];
+trajectories = [Trajectory(; initial_state=Ψ, generator=H) for Ψ ∈ basis];
 
 # Note that we omit the `target_state` here. This is because we will be
 # optimizing for an arbitrary perfect entangler, not for a specific quantum
@@ -438,11 +438,11 @@ D_PE(U_guess)
 
 0.5 * D_PE(U_guess) + 0.5 * (1 - unitarity(U_guess))
 #-
-J_T_PE(guess_states, objectives)
+J_T_PE(guess_states, trajectories)
 
-@test 0.4 < J_T_PE(guess_states, objectives) < 0.5 #src
+@test 0.4 < J_T_PE(guess_states, trajectories) < 0.5 #src
 @test 0.5 * D_PE(U_guess) + 0.5 * (1 - unitarity(U_guess)) ≈ #src
-      J_T_PE(guess_states, objectives) atol = 1e-15  #src
+      J_T_PE(guess_states, trajectories) atol = 1e-15  #src
 
 
 # For the standard functional `J_T_sm` used in the previous section, our GRAPE
@@ -458,17 +458,19 @@ J_T_PE(guess_states, objectives)
 # two-qubit gate ``U_{kk'}``. The remaining derivatives ``∂J_T/∂U_{kk'}`` are
 # then obtained via automatic differentiation. This is set up via the
 # `make_gate_chi` function,
+using Zygote
+QuantumControl.set_default_ad_framework(Zygote)
 
 using QuantumControl.Functionals: make_gate_chi
-chi_pe = make_gate_chi(D_PE, objectives; unitarity_weight=0.5);
+chi_pe = make_gate_chi(D_PE, trajectories; unitarity_weight=0.5);
 
 # where the resulting `chi_pe` must be passed to the optimization.
 
 # Now, we formulate the full control problem
 
 problem = ControlProblem(
-    objectives=objectives,
-    tlist=tlist,
+    trajectories,
+    tlist;
     iter_stop=100,
     prop_method=Cheby,
     J_T=J_T_PE,
@@ -490,8 +492,9 @@ problem = ControlProblem(
 
 # With this, we can easily find a solution to the control problem:
 
-optimize(problem; method=:GRAPE, iter_stop=1) # compile #src
-opt_result = @optimize_or_load(datadir("GRAPE_PE_OCT.jld2"), problem; method=:GRAPE);
+using GRAPE
+optimize(problem; method=GRAPE, iter_stop=1) # compile #src
+opt_result = @optimize_or_load(datadir("GRAPE_PE_OCT.jld2"), problem; method=GRAPE);
 #-
 opt_result
 
@@ -509,10 +512,10 @@ display(fig) #src
 # We then propagate the optimized control field to analyze the resulting
 # quantum gate:
 
-opt_states = propagate_objectives(
+opt_states = propagate_trajectories(
     substitute(
-        objectives,
-        IdDict(zip(get_controls(objectives), opt_result.optimized_controls))
+        trajectories,
+        IdDict(zip(get_controls(trajectories), opt_result.optimized_controls))
     ),
     tlist;
     method=Cheby,
@@ -561,25 +564,25 @@ J_T_C(U) = 0.5 * (1 - gate_concurrence(U)) + 0.5 * (1 - unitarity(U));
 
 optimize( # compile #src
     problem; #src
-    method=:GRAPE, #src
+    method=GRAPE, #src
     J_T=gate_functional(J_T_C), #src
-    chi=make_gate_chi(J_T_C, objectives), #src
+    chi=make_gate_chi(J_T_C, trajectories), #src
     iter_stop=1 #src
 ) #src
 opt_result_direct = @optimize_or_load(
     datadir("GRAPE_PE_OCT_direct.jld2"),
     problem;
-    method=:GRAPE,
+    method=GRAPE,
     J_T=gate_functional(J_T_C),
-    chi=make_gate_chi(J_T_C, objectives)
+    chi=make_gate_chi(J_T_C, trajectories)
 );
 #-
 opt_result_direct
 #-
-opt_states_direct = propagate_objectives(
+opt_states_direct = propagate_trajectories(
     substitute(
-        objectives,
-        IdDict(zip(get_controls(objectives), opt_result_direct.optimized_controls))
+        trajectories,
+        IdDict(zip(get_controls(trajectories), opt_result_direct.optimized_controls))
     ),
     tlist;
     method=Cheby,
