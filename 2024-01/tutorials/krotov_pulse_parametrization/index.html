@@ -35,11 +35,11 @@ end;</code></pre><pre><code class="language-julia hljs">H = tls_hamiltonian();</
     plot(tlist, discretize(ampl, tlist), xlabel=&quot;time&quot;, ylabel=&quot;amplitude&quot;, legend=false)
 end
 
-fig = plot_amplitude(ϵ, tlist)</code></pre><p><img src="krotov_pulse_parametrization-21.png" alt/></p><h2 id="Optimization-target"><a class="docs-heading-anchor" href="#Optimization-target">Optimization target</a><a id="Optimization-target-1"></a><a class="docs-heading-anchor-permalink" href="#Optimization-target" title="Permalink"></a></h2><p>The <code>krotov</code> package requires the goal of the optimization to be described by a list of <code>Objective</code> instances. In this example, there is only a single objective: the state-to-state transfer from initial state <span>$\ket{\Psi_{\init}} = \ket{0}$</span> to the target state <span>$\ket{\Psi_{\tgt}} = \ket{1}$</span>, under the dynamics of the Hamiltonian <span>$\op{H}(t)$</span>:</p><pre><code class="language-julia hljs">function ket(label)
+fig = plot_amplitude(ϵ, tlist)</code></pre><p><img src="krotov_pulse_parametrization-21.png" alt/></p><h2 id="Optimization-target"><a class="docs-heading-anchor" href="#Optimization-target">Optimization target</a><a id="Optimization-target-1"></a><a class="docs-heading-anchor-permalink" href="#Optimization-target" title="Permalink"></a></h2><p>The <code>Krotov</code> package requires the optimization to be expressed over a set of &quot;trajectories&quot;. In this example, there is only a single trajectory: the state-to-state transfer from initial state <span>$\ket{\Psi_{\init}} = \ket{0}$</span> to the target state <span>$\ket{\Psi_{\tgt}} = \ket{1}$</span>, under the dynamics of the Hamiltonian <span>$\op{H}(t)$</span>:</p><pre><code class="language-julia hljs">function ket(label)
     result = Dict(&quot;0&quot; =&gt; Vector{ComplexF64}([1, 0]), &quot;1&quot; =&gt; Vector{ComplexF64}([0, 1]),)
     return result[string(label)]
-end;</code></pre><pre><code class="language-julia hljs">objectives = [Objective(initial_state=ket(0), generator=H, target_state=ket(1))]</code></pre><pre><code class="nohighlight hljs">1-element Vector{QuantumControlBase.Objective{Vector{ComplexF64}, QuantumPropagators.Generators.Generator{Matrix{ComplexF64}, typeof(Main.var&quot;##225&quot;.ϵ)}}}:
- Objective{Vector{ComplexF64}, QuantumPropagators.Generators.Generator{Matrix{ComplexF64}, typeof(Main.var&quot;##225&quot;.ϵ)}}(…)</code></pre><h2 id="Square-parametrization-for-positive-pulses"><a class="docs-heading-anchor" href="#Square-parametrization-for-positive-pulses">Square-parametrization for positive pulses</a><a id="Square-parametrization-for-positive-pulses-1"></a><a class="docs-heading-anchor-permalink" href="#Square-parametrization-for-positive-pulses" title="Permalink"></a></h2><pre><code class="language-julia hljs">a = ParametrizedAmplitude(
+end;</code></pre><pre><code class="language-julia hljs">trajectories = [Trajectory(ket(0), H, target_state=ket(1))]</code></pre><pre><code class="nohighlight hljs">1-element Vector{QuantumControlBase.Trajectory{Vector{ComplexF64}, QuantumPropagators.Generators.Generator{Matrix{ComplexF64}, typeof(Main.var&quot;##225&quot;.ϵ)}}}:
+ Trajectory with 2-element Vector{ComplexF64} initial state, Generator with 2 ops and 1 amplitudes, 2-element Vector{ComplexF64} target state</code></pre><h2 id="Square-parametrization-for-positive-pulses"><a class="docs-heading-anchor" href="#Square-parametrization-for-positive-pulses">Square-parametrization for positive pulses</a><a id="Square-parametrization-for-positive-pulses-1"></a><a class="docs-heading-anchor-permalink" href="#Square-parametrization-for-positive-pulses" title="Permalink"></a></h2><pre><code class="language-julia hljs">a = ParametrizedAmplitude(
     ϵ,
     tlist;
     parametrization=SquareParametrization(),
@@ -55,7 +55,7 @@ end;</code></pre><pre><code class="language-julia hljs">objectives = [Objective(
 end
 
 fig = plot_amplitude(a, tlist)</code></pre><p><img src="krotov_pulse_parametrization-28.png" alt/></p><pre><code class="language-julia hljs">problem = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ =&gt; a)),
+    trajectories=substitute(trajectories, IdDict(ϵ =&gt; a)),
     prop_method=ExpProp,
     lambda_a=5,
     update_shape=(t -&gt; flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -65,14 +65,15 @@ fig = plot_amplitude(a, tlist)</code></pre><p><img src="krotov_pulse_parametriza
     check_convergence=res -&gt; begin
         ((res.J_T &lt; 1e-3) &amp;&amp; (res.converged = true) &amp;&amp; (res.message = &quot;J_T &lt; 10⁻³&quot;))
     end
-);</code></pre><pre><code class="language-julia hljs">opt_result_positive = @optimize_or_load(
+);</code></pre><pre><code class="language-julia hljs">using Krotov
+opt_result_positive = @optimize_or_load(
     datadir(&quot;parametrization#opt_result_positive.jld2&quot;),
     problem;
-    method=:krotov
+    method=Krotov
 );</code></pre><pre><code class="nohighlight hljs"> iter.        J_T   ∫gₐ(t)dt          J       ΔJ_T         ΔJ    secs
-     0   9.51e-01   0.00e+00   9.51e-01        n/a        n/a     4.9
-[ Info: Set callback to store result in /storage/goerz/nobackup/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_positive.jld2 on unexpected exit.
-     1   9.31e-01   9.29e-03   9.40e-01  -2.05e-02  -1.12e-02     2.3
+     0   9.51e-01   0.00e+00   9.51e-01        n/a        n/a     3.7
+[ Info: Set callback to store result in /net/storage/mgoerz/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_positive.jld2 on unexpected exit.
+     1   9.31e-01   9.29e-03   9.40e-01  -2.05e-02  -1.12e-02     1.7
      2   9.01e-01   1.34e-02   9.15e-01  -2.96e-02  -1.63e-02     0.0
      3   8.59e-01   1.91e-02   8.78e-01  -4.25e-02  -2.34e-02     0.0
      4   7.99e-01   2.67e-02   8.26e-01  -5.96e-02  -3.29e-02     0.0
@@ -81,7 +82,7 @@ fig = plot_amplitude(a, tlist)</code></pre><p><img src="krotov_pulse_parametriza
      7   5.25e-01   4.62e-02   5.72e-01  -9.96e-02  -5.33e-02     0.0
      8   4.36e-01   4.25e-02   4.79e-01  -8.92e-02  -4.66e-02     0.0
      9   3.65e-01   3.49e-02   4.00e-01  -7.14e-02  -3.64e-02     0.0
-    10   3.10e-01   2.74e-02   3.37e-01  -5.48e-02  -2.74e…
+    10   3.10e-01   2.74e-02   3.37e-01  -5.48e-02  -2.74e-02 …
     37   5.05e-02   8.59e-04   5.13e-02  -1.70e-03  -8.45e-04     0.0
     38   4.89e-02   8.05e-04   4.97e-02  -1.60e-03  -7.93e-04     0.0
     39   4.74e-02   7.56e-04   4.81e-02  -1.50e-03  -7.45e-04     0.0
@@ -99,12 +100,12 @@ fig = plot_amplitude(a, tlist)</code></pre><p><img src="krotov_pulse_parametriza
 
 </code></pre><pre><code class="language-julia hljs">opt_result_positive</code></pre><pre><code class="nohighlight hljs">Krotov Optimization Result
 --------------------------
-- Started at 2024-01-17T21:07:41.380
-- Number of objectives: 1
+- Started at 2024-01-23T22:48:53.606
+- Number of trajectories: 1
 - Number of iterations: 50
 - Value of functional: 3.53585e-02
 - Reason for termination: Reached maximum number of iterations
-- Ended at 2024-01-17T21:07:48.976 (7 seconds, 596 milliseconds)
+- Ended at 2024-01-23T22:48:59.552 (5 seconds, 946 milliseconds)
 </code></pre><p>We can plot the optimized field:</p><pre><code class="language-julia hljs">fig = plot_amplitude(
     substitute(a, IdDict(a.control =&gt; opt_result_positive.optimized_controls[1])),
     tlist
@@ -116,7 +117,7 @@ fig = plot_amplitude(a, tlist)</code></pre><p><img src="krotov_pulse_parametriza
 )
 
 problem_tanhsq = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ =&gt; a)),
+    trajectories=substitute(trajectories, IdDict(ϵ =&gt; a)),
     prop_method=ExpProp,
     lambda_a=10,
     update_shape=(t -&gt; flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -129,10 +130,10 @@ problem_tanhsq = ControlProblem(
 );</code></pre><pre><code class="language-julia hljs">opt_result_tanhsq = @optimize_or_load(
     datadir(&quot;parametrization#opt_result_tanhsq.jld2&quot;),
     problem_tanhsq;
-    method=:krotov
+    method=Krotov
 );</code></pre><pre><code class="nohighlight hljs"> iter.        J_T   ∫gₐ(t)dt          J       ΔJ_T         ΔJ    secs
      0   9.51e-01   0.00e+00   9.51e-01        n/a        n/a     0.1
-[ Info: Set callback to store result in /storage/goerz/nobackup/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_tanhsq.jld2 on unexpected exit.
+[ Info: Set callback to store result in /net/storage/mgoerz/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_tanhsq.jld2 on unexpected exit.
      1   9.24e-01   1.21e-02   9.36e-01  -2.76e-02  -1.54e-02     0.0
      2   8.81e-01   1.90e-02   9.00e-01  -4.32e-02  -2.42e-02     0.0
      3   8.15e-01   2.88e-02   8.44e-01  -6.54e-02  -3.65e-02     0.0
@@ -142,7 +143,7 @@ problem_tanhsq = ControlProblem(
      7   4.19e-01   4.38e-02   4.62e-01  -8.92e-02  -4.54e-02     0.0
      8   3.52e-01   3.37e-02   3.85e-01  -6.69e-02  -3.33e-02     0.0
      9   3.02e-01   2.51e-02   3.28e-01  -4.92e-02  -2.41e-02     0.0
-    10   2.66e-01   1.89e-02   2.84e-01  -3.69e-02  -1.79e-0…
+    10   2.66e-01   1.89e-02   2.84e-01  -3.69e-02  -1.79e-02   …
     37   8.06e-02   7.52e-04   8.14e-02  -1.49e-03  -7.37e-04     0.0
     38   7.92e-02   7.10e-04   8.00e-02  -1.41e-03  -6.96e-04     0.0
     39   7.79e-02   6.72e-04   7.86e-02  -1.33e-03  -6.59e-04     0.0
@@ -160,12 +161,12 @@ problem_tanhsq = ControlProblem(
 
 </code></pre><pre><code class="language-julia hljs">opt_result_tanhsq</code></pre><pre><code class="nohighlight hljs">Krotov Optimization Result
 --------------------------
-- Started at 2024-01-17T21:07:52.043
-- Number of objectives: 1
+- Started at 2024-01-23T22:49:02.319
+- Number of trajectories: 1
 - Number of iterations: 50
 - Value of functional: 6.69321e-02
 - Reason for termination: Reached maximum number of iterations
-- Ended at 2024-01-17T21:07:52.575 (532 milliseconds)
+- Ended at 2024-01-23T22:49:02.878 (559 milliseconds)
 </code></pre><p>We can plot the optimized field:</p><pre><code class="language-julia hljs">fig = plot_amplitude(
     substitute(a, IdDict(a.control =&gt; opt_result_tanhsq.optimized_controls[1])),
     tlist
@@ -177,7 +178,7 @@ problem_tanhsq = ControlProblem(
 )
 
 problem_logisticsq = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ =&gt; a)),
+    trajectories=substitute(trajectories, IdDict(ϵ =&gt; a)),
     prop_method=ExpProp,
     lambda_a=1,
     update_shape=(t -&gt; flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -190,10 +191,10 @@ problem_logisticsq = ControlProblem(
 );</code></pre><pre><code class="language-julia hljs">opt_result_logisticsq = @optimize_or_load(
     datadir(&quot;parametrization#opt_result_logisticsq.jld2&quot;),
     problem_logisticsq;
-    method=:krotov
+    method=Krotov
 );</code></pre><pre><code class="nohighlight hljs"> iter.        J_T   ∫gₐ(t)dt          J       ΔJ_T         ΔJ    secs
      0   9.51e-01   0.00e+00   9.51e-01        n/a        n/a     0.1
-[ Info: Set callback to store result in /storage/goerz/nobackup/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_logisticsq.jld2 on unexpected exit.
+[ Info: Set callback to store result in /net/storage/mgoerz/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_logisticsq.jld2 on unexpected exit.
      1   8.72e-01   2.97e-02   9.02e-01  -7.91e-02  -4.93e-02     0.0
      2   6.93e-01   6.94e-02   7.63e-01  -1.79e-01  -1.10e-01     0.0
      3   4.57e-01   1.03e-01   5.60e-01  -2.36e-01  -1.33e-01     0.0
@@ -203,7 +204,7 @@ problem_logisticsq = ControlProblem(
      7   1.59e-01   1.48e-02   1.74e-01  -2.82e-02  -1.34e-02     0.0
      8   1.39e-01   1.03e-02   1.49e-01  -1.97e-02  -9.38e-03     0.0
      9   1.25e-01   7.53e-03   1.32e-01  -1.45e-02  -6.93e-03     0.0
-    10   1.14e-01   5.74e-03   1.19e-01  -1.11e-02  -5.3…
+    10   1.14e-01   5.74e-03   1.19e-01  -1.11e-02  -5.33e-0…
     37   4.98e-02   3.05e-04   5.01e-02  -6.03e-04  -2.99e-04     0.0
     38   4.92e-02   2.88e-04   4.95e-02  -5.71e-04  -2.83e-04     0.0
     39   4.87e-02   2.74e-04   4.89e-02  -5.42e-04  -2.68e-04     0.0
@@ -230,7 +231,7 @@ problem_logisticsq = ControlProblem(
 )
 
 problem_tanh = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ =&gt; a)),
+    trajectories=substitute(trajectories, IdDict(ϵ =&gt; a)),
     prop_method=ExpProp,
     lambda_a=1,
     update_shape=(t -&gt; flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -243,10 +244,10 @@ problem_tanh = ControlProblem(
 );</code></pre><pre><code class="language-julia hljs">opt_result_tanh = @optimize_or_load(
     datadir(&quot;parametrization#opt_result_tanh.jld2&quot;),
     problem_tanh;
-    method=:krotov
+    method=Krotov
 );</code></pre><pre><code class="nohighlight hljs"> iter.        J_T   ∫gₐ(t)dt          J       ΔJ_T         ΔJ    secs
-     0   9.51e-01   0.00e+00   9.51e-01        n/a        n/a     0.1
-[ Info: Set callback to store result in /storage/goerz/nobackup/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_tanh.jld2 on unexpected exit.
+     0   9.51e-01   0.00e+00   9.51e-01        n/a        n/a     0.2
+[ Info: Set callback to store result in /net/storage/mgoerz/QuantumControlExamples.jl/tutorials/krotov_pulse_parametrization/parametrization#opt_result_tanh.jld2 on unexpected exit.
      1   9.27e-01   1.09e-02   9.38e-01  -2.40e-02  -1.31e-02     0.0
      2   8.93e-01   1.56e-02   9.09e-01  -3.42e-02  -1.87e-02     0.0
      3   8.46e-01   2.18e-02   8.67e-01  -4.77e-02  -2.59e-02     0.0
@@ -256,7 +257,7 @@ problem_tanh = ControlProblem(
      7   5.33e-01   4.12e-02   5.74e-01  -8.33e-02  -4.21e-02     0.0
      8   4.62e-01   3.59e-02   4.98e-01  -7.11e-02  -3.52e-02     0.0
      9   4.05e-01   2.89e-02   4.34e-01  -5.66e-02  -2.77e-02     0.0
-    10   3.61e-01   2.26e-02   3.84e-01  -4.40e-02  -2.14e-02 …
+    10   3.61e-01   2.26e-02   3.84e-01  -4.40e-02  -2.14e-02     …
     37   1.35e-01   9.69e-04   1.36e-01  -1.92e-03  -9.52e-04     0.0
     38   1.33e-01   9.17e-04   1.34e-01  -1.82e-03  -9.02e-04     0.0
     39   1.31e-01   8.70e-04   1.32e-01  -1.73e-03  -8.56e-04     0.0
@@ -275,4 +276,4 @@ problem_tanh = ControlProblem(
 </code></pre><pre><code class="language-julia hljs">fig = plot_amplitude(
     substitute(a, IdDict(a.control =&gt; opt_result_tanh.optimized_controls[1])),
     tlist
-)</code></pre><p><img src="krotov_pulse_parametrization-48.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« List of Tutorials</a><a class="docs-footer-nextpage" href="../../examples/">List of Examples »</a><div class="flexbox-break"></div><p class="footer-message"><a href="https://github.com/JuliaQuantumControl/QuantumControlExamples.jl">JuliaQuantumControl Tutorials and Examples</a> powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Thursday 18 January 2024 03:16">Thursday 18 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+)</code></pre><p><img src="krotov_pulse_parametrization-48.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« List of Tutorials</a><a class="docs-footer-nextpage" href="../../examples/">List of Examples »</a><div class="flexbox-break"></div><p class="footer-message"><a href="https://github.com/JuliaQuantumControl/QuantumControlExamples.jl">JuliaQuantumControl Tutorials and Examples</a> powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Tuesday 23 January 2024 21:54">Tuesday 23 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

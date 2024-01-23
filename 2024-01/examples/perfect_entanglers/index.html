@@ -106,7 +106,15 @@ function plot_complex_pulse(tlist, Ω; time_unit=:ns, ampl_unit=:MHz, kwargs...)
 
 end
 
-fig = plot_complex_pulse(tlist, Array(Ωre_guess) .+ 𝕚 .* Array(Ωim_guess))</code></pre><p><img src="perfect_entanglers-18.png" alt/></p><p>We now instantiate the Hamiltonian with these control fields:</p><pre><code class="language-julia hljs">H = transmon_hamiltonian(Ωre=Ωre_guess, Ωim=Ωim_guess)</code></pre><pre><code class="nohighlight hljs">Generator{SparseArrays.SparseMatrixCSC{ComplexF64, Int64}, QuantumPropagators.Amplitudes.ShapedPulseAmplitude}(&lt;3 ops&gt;, &lt;2 amplitudes&gt;)</code></pre><h2 id="Logical-basis-for-two-qubit-gates"><a class="docs-heading-anchor" href="#Logical-basis-for-two-qubit-gates">Logical basis for two-qubit gates</a><a id="Logical-basis-for-two-qubit-gates-1"></a><a class="docs-heading-anchor-permalink" href="#Logical-basis-for-two-qubit-gates" title="Permalink"></a></h2><p>For simplicity, we will be define the qubits in the <em>bare</em> basis, i.e. ignoring the static coupling <span>$J$</span>.</p><pre><code class="language-julia hljs">function ket(i::Int64; N=N)
+fig = plot_complex_pulse(tlist, Array(Ωre_guess) .+ 𝕚 .* Array(Ωim_guess))</code></pre><p><img src="perfect_entanglers-18.png" alt/></p><p>We now instantiate the Hamiltonian with these control fields:</p><pre><code class="language-julia hljs">H = transmon_hamiltonian(Ωre=Ωre_guess, Ωim=Ωim_guess)</code></pre><pre><code class="nohighlight hljs">Generator with 3 ops and 2 amplitudes
+ ops::Vector{SparseArrays.SparseMatrixCSC{ComplexF64, Int64}}:
+  sparse([2, 7, 3, 8, 4, 9, 5, 10, 6, 11, 2, 7, 3, 8, 13, 4, 9, 14, 5, 10, 15, 6, 11, 16, 12, 17, 8, 13, 9, 14, 19, 10, 15, 20, 11, 16, 21, 12, 17, 22, 18, 23, 14, 19, 15, 20, 25, 16, 21, 26, 17, 22, 27, 18, 23, 28, 24, 29, 20, 25, 21, 26, 31, 22, 27, 32, 23, 28, 33, 24, 29, 34, 30, 35, 26, 31, 27, 32, 28, 33, 29, 34, 30, 35, 36], [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 13, 13, 14, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 22, 23, 23, 23, 24, 24, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35, 36], ComplexF64[0.7288494956328294 + 0.0im, -0.01884955592153876 + 0.0im, 0.10681415022204677 + 0.0im, -0.026657297628950197 + 0.0im, -1.8661060362323445 + 0.0im, -0.03264838855621592 + 0.0im, -5.189911063730349 + 0.0im, -0.03769911184307752 + 0.0im, -9.864600932271973 + 0.0im, -0.04214888838624436 + 0.0im, -0.01884955592153876 + 0.0im, -0.7414158662471912 + 0.0im, -0.026657297628950197 + 0.0im, -0.012566370614361833 + 0.0im, -0.026657297628950197 + 0.0im, -0.03264838855621592 + 0.0im, -0.6346017160251445 + 0.0im, -0.037699111843077525 + 0.0im, -0.03769911184307752 + 0.0im, -2.6075219024795357 + 0.0im, -0.04617179388582711 + 0.0im, -0.04214888838624436 + 0.0im, -5.931326929977541 + 0.0im, -0.053314595257900395 + 0.0im, -10.606016798519164 + 0.0im, -0.05960752959477661 + 0.0im, -0.026657297628950197 + 0.0im, -2.802300647002097 + 0.0im, -0.037699111843077525 + 0.0im, -2.0734511513692677 + 0.0im, -0.03264838855621592 + 0.0im, -0.04617179388582711 + 0.0im, -2.6954864967800503 + 0.0im, -0.04617179388582711 + 0.0im, -0.053314595257900395 + 0.0im, -4.6684066832344415 + 0.0im, -0.05654866776461627 + 0.0im, -0.05960752959477661 + 0.0im, -7.992211710732446 + 0.0im, -0.06529677711243184 + 0.0im, -12.666901579274068 + 0.0im, -0.07300401616752501 + 0.0im, -0.03264838855621592 + 0.0im, -6.182654342264712 + 0.0im, -0.04617179388582711 + 0.0im, -5.453804846631882 + 0.0im, -0.03769911184307752 + 0.0im, -0.05654866776461627 + 0.0im, -6.075840192042666 + 0.0im, -0.053314595257900395 + 0.0im, -0.06529677711243184 + 0.0im, -8.048760378497057 + 0.0im, -0.06529677711243184 + 0.0im, -0.07300401616752501 + 0.0im, -11.372565405995061 + 0.0im, -0.07539822368615504 + 0.0im, -16.047255274536685 + 0.0im, -0.08429777677248872 + 0.0im, -0.03769911184307752 + 0.0im, -10.882476952035045 + 0.0im, -0.053314595257900395 + 0.0im, -10.153627456402216 + 0.0im, -0.04214888838624436 + 0.0im, -0.06529677711243184 + 0.0im, -10.775662801812999 + 0.0im, -0.05960752959477661 + 0.0im, -0.07539822368615504 + 0.0im, -12.74858298826739 + 0.0im, -0.07300401616752501 + 0.0im, -0.08429777677248872 + 0.0im, -16.072388015765394 + 0.0im, -0.08429777677248872 + 0.0im, -20.747077884307018 + 0.0im, -0.09424777960769382 + 0.0im, -0.04214888838624436 + 0.0im, -16.901768476313094 + 0.0im, -0.05960752959477661 + 0.0im, -16.172918980680265 + 0.0im, -0.07300401616752501 + 0.0im, -16.794954326091048 + 0.0im, -0.08429777677248872 + 0.0im, -18.76787451254544 + 0.0im, -0.09424777960769382 + 0.0im, -22.091679540043444 + 0.0im, -26.766369408585067 + 0.0im], 36, 36)
+  sparse([2, 7, 1, 3, 8, 2, 4, 9, 3, 5, 10, 4, 6, 11, 5, 12, 1, 8, 13, 2, 7, 9, 14, 3, 8, 10, 15, 4, 9, 11, 16, 5, 10, 12, 17, 6, 11, 18, 7, 14, 19, 8, 13, 15, 20, 9, 14, 16, 21, 10, 15, 17, 22, 11, 16, 18, 23, 12, 17, 24, 13, 20, 25, 14, 19, 21, 26, 15, 20, 22, 27, 16, 21, 23, 28, 17, 22, 24, 29, 18, 23, 30, 19, 26, 31, 20, 25, 27, 32, 21, 26, 28, 33, 22, 27, 29, 34, 23, 28, 30, 35, 24, 29, 36, 25, 32, 26, 31, 33, 27, 32, 34, 28, 33, 35, 29, 34, 36, 30, 35], [1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36], ComplexF64[0.515 + 0.0im, 0.5 + 0.0im, 0.515 + 0.0im, 0.728319984622144 + 0.0im, 0.5 + 0.0im, 0.728319984622144 + 0.0im, 0.8920061658979718 + 0.0im, 0.5 + 0.0im, 0.8920061658979718 + 0.0im, 1.03 + 0.0im, 0.5 + 0.0im, 1.03 + 0.0im, 1.1515750084123917 + 0.0im, 0.5 + 0.0im, 1.1515750084123917 + 0.0im, 0.5 + 0.0im, 0.5 + 0.0im, 0.515 + 0.0im, 0.7071067811865476 + 0.0im, 0.5 + 0.0im, 0.515 + 0.0im, 0.728319984622144 + 0.0im, 0.7071067811865476 + 0.0im, 0.5 + 0.0im, 0.728319984622144 + 0.0im, 0.8920061658979718 + 0.0im, 0.7071067811865476 + 0.0im, 0.5 + 0.0im, 0.8920061658979718 + 0.0im, 1.03 + 0.0im, 0.7071067811865476 + 0.0im, 0.5 + 0.0im, 1.03 + 0.0im, 1.1515750084123917 + 0.0im, 0.7071067811865476 + 0.0im, 0.5 + 0.0im, 1.1515750084123917 + 0.0im, 0.7071067811865476 + 0.0im, 0.7071067811865476 + 0.0im, 0.515 + 0.0im, 0.8660254037844386 + 0.0im, 0.7071067811865476 + 0.0im, 0.515 + 0.0im, 0.728319984622144 + 0.0im, 0.8660254037844386 + 0.0im, 0.7071067811865476 + 0.0im, 0.728319984622144 + 0.0im, 0.8920061658979718 + 0.0im, 0.8660254037844386 + 0.0im, 0.7071067811865476 + 0.0im, 0.8920061658979718 + 0.0im, 1.03 + 0.0im, 0.8660254037844386 + 0.0im, 0.7071067811865476 + 0.0im, 1.03 + 0.0im, 1.1515750084123917 + 0.0im, 0.8660254037844386 + 0.0im, 0.7071067811865476 + 0.0im, 1.1515750084123917 + 0.0im, 0.8660254037844386 + 0.0im, 0.8660254037844386 + 0.0im, 0.515 + 0.0im, 1.0 + 0.0im, 0.8660254037844386 + 0.0im, 0.515 + 0.0im, 0.728319984622144 + 0.0im, 1.0 + 0.0im, 0.8660254037844386 + 0.0im, 0.728319984622144 + 0.0im, 0.8920061658979718 + 0.0im, 1.0 + 0.0im, 0.8660254037844386 + 0.0im, 0.8920061658979718 + 0.0im, 1.03 + 0.0im, 1.0 + 0.0im, 0.8660254037844386 + 0.0im, 1.03 + 0.0im, 1.1515750084123917 + 0.0im, 1.0 + 0.0im, 0.8660254037844386 + 0.0im, 1.1515750084123917 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im, 0.515 + 0.0im, 1.118033988749895 + 0.0im, 1.0 + 0.0im, 0.515 + 0.0im, 0.728319984622144 + 0.0im, 1.118033988749895 + 0.0im, 1.0 + 0.0im, 0.728319984622144 + 0.0im, 0.8920061658979718 + 0.0im, 1.118033988749895 + 0.0im, 1.0 + 0.0im, 0.8920061658979718 + 0.0im, 1.03 + 0.0im, 1.118033988749895 + 0.0im, 1.0 + 0.0im, 1.03 + 0.0im, 1.1515750084123917 + 0.0im, 1.118033988749895 + 0.0im, 1.0 + 0.0im, 1.1515750084123917 + 0.0im, 1.118033988749895 + 0.0im, 1.118033988749895 + 0.0im, 0.515 + 0.0im, 1.118033988749895 + 0.0im, 0.515 + 0.0im, 0.728319984622144 + 0.0im, 1.118033988749895 + 0.0im, 0.728319984622144 + 0.0im, 0.8920061658979718 + 0.0im, 1.118033988749895 + 0.0im, 0.8920061658979718 + 0.0im, 1.03 + 0.0im, 1.118033988749895 + 0.0im, 1.03 + 0.0im, 1.1515750084123917 + 0.0im, 1.118033988749895 + 0.0im, 1.1515750084123917 + 0.0im], 36, 36)
+  sparse([2, 7, 1, 3, 8, 2, 4, 9, 3, 5, 10, 4, 6, 11, 5, 12, 1, 8, 13, 2, 7, 9, 14, 3, 8, 10, 15, 4, 9, 11, 16, 5, 10, 12, 17, 6, 11, 18, 7, 14, 19, 8, 13, 15, 20, 9, 14, 16, 21, 10, 15, 17, 22, 11, 16, 18, 23, 12, 17, 24, 13, 20, 25, 14, 19, 21, 26, 15, 20, 22, 27, 16, 21, 23, 28, 17, 22, 24, 29, 18, 23, 30, 19, 26, 31, 20, 25, 27, 32, 21, 26, 28, 33, 22, 27, 29, 34, 23, 28, 30, 35, 24, 29, 36, 25, 32, 26, 31, 33, 27, 32, 34, 28, 33, 35, 29, 34, 36, 30, 35], [1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36], ComplexF64[0.0 + 0.515im, 0.0 + 0.5im, -0.0 - 0.515im, 0.0 + 0.728319984622144im, 0.0 + 0.5im, -0.0 - 0.728319984622144im, 0.0 + 0.8920061658979718im, 0.0 + 0.5im, -0.0 - 0.8920061658979718im, 0.0 + 1.03im, 0.0 + 0.5im, -0.0 - 1.03im, 0.0 + 1.1515750084123917im, 0.0 + 0.5im, -0.0 - 1.1515750084123917im, 0.0 + 0.5im, -0.0 - 0.5im, 0.0 + 0.515im, 0.0 + 0.7071067811865476im, -0.0 - 0.5im, -0.0 - 0.515im, 0.0 + 0.728319984622144im, 0.0 + 0.7071067811865476im, -0.0 - 0.5im, -0.0 - 0.728319984622144im, 0.0 + 0.8920061658979718im, 0.0 + 0.7071067811865476im, -0.0 - 0.5im, -0.0 - 0.8920061658979718im, 0.0 + 1.03im, 0.0 + 0.7071067811865476im, -0.0 - 0.5im, -0.0 - 1.03im, 0.0 + 1.1515750084123917im, 0.0 + 0.7071067811865476im, -0.0 - 0.5im, -0.0 - 1.1515750084123917im, 0.0 + 0.7071067811865476im, -0.0 - 0.7071067811865476im, 0.0 + 0.515im, 0.0 + 0.8660254037844386im, -0.0 - 0.7071067811865476im, -0.0 - 0.515im, 0.0 + 0.728319984622144im, 0.0 + 0.8660254037844386im, -0.0 - 0.7071067811865476im, -0.0 - 0.728319984622144im, 0.0 + 0.8920061658979718im, 0.0 + 0.8660254037844386im, -0.0 - 0.7071067811865476im, -0.0 - 0.8920061658979718im, 0.0 + 1.03im, 0.0 + 0.8660254037844386im, -0.0 - 0.7071067811865476im, -0.0 - 1.03im, 0.0 + 1.1515750084123917im, 0.0 + 0.8660254037844386im, -0.0 - 0.7071067811865476im, -0.0 - 1.1515750084123917im, 0.0 + 0.8660254037844386im, -0.0 - 0.8660254037844386im, 0.0 + 0.515im, 0.0 + 1.0im, -0.0 - 0.8660254037844386im, -0.0 - 0.515im, 0.0 + 0.728319984622144im, 0.0 + 1.0im, -0.0 - 0.8660254037844386im, -0.0 - 0.728319984622144im, 0.0 + 0.8920061658979718im, 0.0 + 1.0im, -0.0 - 0.8660254037844386im, -0.0 - 0.8920061658979718im, 0.0 + 1.03im, 0.0 + 1.0im, -0.0 - 0.8660254037844386im, -0.0 - 1.03im, 0.0 + 1.1515750084123917im, 0.0 + 1.0im, -0.0 - 0.8660254037844386im, -0.0 - 1.1515750084123917im, 0.0 + 1.0im, -0.0 - 1.0im, 0.0 + 0.515im, 0.0 + 1.118033988749895im, -0.0 - 1.0im, -0.0 - 0.515im, 0.0 + 0.728319984622144im, 0.0 + 1.118033988749895im, -0.0 - 1.0im, -0.0 - 0.728319984622144im, 0.0 + 0.8920061658979718im, 0.0 + 1.118033988749895im, -0.0 - 1.0im, -0.0 - 0.8920061658979718im, 0.0 + 1.03im, 0.0 + 1.118033988749895im, -0.0 - 1.0im, -0.0 - 1.03im, 0.0 + 1.1515750084123917im, 0.0 + 1.118033988749895im, -0.0 - 1.0im, -0.0 - 1.1515750084123917im, 0.0 + 1.118033988749895im, -0.0 - 1.118033988749895im, 0.0 + 0.515im, -0.0 - 1.118033988749895im, -0.0 - 0.515im, 0.0 + 0.728319984622144im, -0.0 - 1.118033988749895im, -0.0 - 0.728319984622144im, 0.0 + 0.8920061658979718im, -0.0 - 1.118033988749895im, -0.0 - 0.8920061658979718im, 0.0 + 1.03im, -0.0 - 1.118033988749895im, -0.0 - 1.03im, 0.0 + 1.1515750084123917im, -0.0 - 1.118033988749895im, -0.0 - 1.1515750084123917im], 36, 36)
+ amplitudes::Vector{QuantumPropagators.Amplitudes.ShapedPulseAmplitude}:
+  ShapedAmplitude(::Vector{Float64}; shape::Vector{Float64})
+  ShapedAmplitude(::Vector{Float64}; shape::Vector{Float64})
+</code></pre><h2 id="Logical-basis-for-two-qubit-gates"><a class="docs-heading-anchor" href="#Logical-basis-for-two-qubit-gates">Logical basis for two-qubit gates</a><a id="Logical-basis-for-two-qubit-gates-1"></a><a class="docs-heading-anchor-permalink" href="#Logical-basis-for-two-qubit-gates" title="Permalink"></a></h2><p>For simplicity, we will be define the qubits in the <em>bare</em> basis, i.e. ignoring the static coupling <span>$J$</span>.</p><pre><code class="language-julia hljs">function ket(i::Int64; N=N)
     Ψ = zeros(ComplexF64, N)
     Ψ[i+1] = 1
     return Ψ
@@ -128,14 +136,14 @@ end;</code></pre><pre><code class="language-julia hljs">basis = [ket(&quot;00&qu
     0 1/√2 𝕚/√2 0
     0 𝕚/√2 1/√2 0
     0  0    0   1
-];</code></pre><p>For each basis state, we get a target state that results from applying the gate to the basis state (you can convince yourself that this equivalent multiplying the transpose of the above gate matrix to the vector of basis states):</p><pre><code class="language-julia hljs">basis_tgt = transpose(SQRTISWAP) * basis;</code></pre><p>The mapping from each initial (basis) state to the corresponding target state constitutes an &quot;objective&quot; for the optimization:</p><pre><code class="language-julia hljs">objectives = [
-    Objective(initial_state=Ψ, target_state=Ψtgt, generator=H) for
+];</code></pre><p>For each basis state, we get a target state that results from applying the gate to the basis state (you can convince yourself that this equivalent multiplying the transpose of the above gate matrix to the vector of basis states):</p><pre><code class="language-julia hljs">basis_tgt = transpose(SQRTISWAP) * basis;</code></pre><p>The optimization aims to bring the dynamic trajectory of each basis state to the corresponding target state:</p><pre><code class="language-julia hljs">trajectories = [
+    Trajectory(initial_state=Ψ, target_state=Ψtgt, generator=H) for
     (Ψ, Ψtgt) ∈ zip(basis, basis_tgt)
 ];</code></pre><p>We can analyze how all of the basis states evolve under the guess controls in one go:</p><pre><code class="language-julia hljs">using QuantumPropagators: Cheby
 
-guess_states = propagate_objectives(objectives, tlist; method=Cheby, use_threads=true);</code></pre><p>The gate implemented by the guess controls is</p><pre><code class="language-julia hljs">U_guess = [basis[i] ⋅ guess_states[j] for i = 1:4, j = 1:4];</code></pre><p>We will optimize these objectives with a square-modulus functional</p><pre><code class="language-julia hljs">using QuantumControl.Functionals: J_T_sm</code></pre><p>The initial value of the functional is</p><pre><code class="language-julia hljs">J_T_sm(guess_states, objectives)</code></pre><pre><code class="nohighlight hljs">0.9156372510989136</code></pre><p>which is the gate error</p><pre><code class="language-julia hljs">1 - (abs(tr(U_guess&#39; * SQRTISWAP)) / 4)^2</code></pre><pre><code class="nohighlight hljs">0.9156372510989136</code></pre><p>Now, we define the full optimization problems on top of the list of objectives, and with the optimization functional:</p><pre><code class="language-julia hljs">problem = ControlProblem(
-    objectives=objectives,
-    tlist=tlist,
+guess_states = propagate_trajectories(trajectories, tlist; method=Cheby, use_threads=true);</code></pre><p>The gate implemented by the guess controls is</p><pre><code class="language-julia hljs">U_guess = [basis[i] ⋅ guess_states[j] for i = 1:4, j = 1:4];</code></pre><p>We will optimize these trajectories with a square-modulus functional</p><pre><code class="language-julia hljs">using QuantumControl.Functionals: J_T_sm</code></pre><p>The initial value of the functional is</p><pre><code class="language-julia hljs">J_T_sm(guess_states, trajectories)</code></pre><pre><code class="nohighlight hljs">0.915637251098997</code></pre><p>which is the gate error</p><pre><code class="language-julia hljs">1 - (abs(tr(U_guess&#39; * SQRTISWAP)) / 4)^2</code></pre><pre><code class="nohighlight hljs">0.915637251098997</code></pre><p>Now, we define the full optimization problems on top of the list of trajectories, and with the optimization functional:</p><pre><code class="language-julia hljs">problem = ControlProblem(
+    trajectories,
+    tlist;
     iter_stop=100,
     J_T=J_T_sm,
     check_convergence=res -&gt; begin
@@ -148,72 +156,78 @@ guess_states = propagate_objectives(objectives, tlist; method=Cheby, use_threads
     end,
     prop_method=Cheby,
     use_threads=true,
-);</code></pre><pre><code class="language-julia hljs">opt_result = @optimize_or_load(datadir(&quot;GRAPE_GATE_OCT.jld2&quot;), problem; method=:GRAPE);</code></pre><pre><code class="nohighlight hljs">[ Info: Set callback to store result in /storage/goerz/nobackup/QuantumControlExamples.jl/examples/perfect_entanglers/GRAPE_GATE_OCT.jld2 on unexpected exit.
+);</code></pre><pre><code class="language-julia hljs">using GRAPE
+opt_result = @optimize_or_load(datadir(&quot;GRAPE_GATE_OCT.jld2&quot;), problem; method=GRAPE);</code></pre><pre><code class="nohighlight hljs">[ Info: Set callback to store result in /net/storage/mgoerz/QuantumControlExamples.jl/examples/perfect_entanglers/GRAPE_GATE_OCT.jld2 on unexpected exit.
  iter.        J_T     |∇J_T|       ΔJ_T   FG(F)    secs
-     0   9.16e-01   1.41e-01        n/a    1(0)     6.8
+     0   9.16e-01   1.41e-01        n/a    1(0)     5.3
      1   8.94e-01   2.36e-01  -2.19e-02    1(0)     0.4
      2   8.85e-01   6.54e-01  -8.30e-03    1(0)     0.3
      3   8.52e-01   4.18e-01  -3.35e-02    1(0)     0.3
-     4   7.97e-01   9.12e-01  -5.47e-02    1(0)     0.4
-     5   5.81e-01   1.15e+00  -2.16e-01    2(0)     0.8
-     6   4.49e-01   6.34e-01  -1.32e-01    2(0)     0.7
-     7   4.27e-01   4.43e-01  -2.16e-02    2(0)     0.6
+     4   7.97e-01   9.12e-01  -5.47e-02    1(0)     0.3
+     5   5.81e-01   1.15e+00  -2.16e-01    2(0)     0.6
+     6   4.49e-01   6.34e-01  -1.32e-01    2(0)     0.6
+     7   4.27e-01   4.43e-01  -2.16e-02    2(0)     0.5
      8   3.97e-01   4.53e-01  -3.06e-02    1(0)     0.3
-     9   2.82e-01   1.28e+00  -1.15e-01    1(0)     0.4
-    10   1.96e-01   6.70e-01  -8.51e-02    1(0)     0.4
-    11   1.83e-01   8.17e-01  -1.31e-02    1(0)     0.4
+     9   2.82e-01   1.28e+00  -1.15e-01    1(0)     0.3
+    10   1.96e-01   6.70e-01  -8.51e-02    1(0)     0.3
+    11   1.83e-01   8.17e-01  -1.31e-02    1(0)     0.3
     12   1.61e-01   3.98e-01  -2.23e-02    1(0)     0.3
     13   1.53e-01   2.25e-01  -7.98e-03    1(0)     0.3
-    14   1.42e-01   2.2…
+    14   1.42e-01   2.21e-0…
     21   4.14e-02   1.76e-01  -5.42e-03    1(0)     0.3
-    22   3.60e-02   2.23e-01  -5.39e-03    1(0)     0.4
+    22   3.60e-02   2.23e-01  -5.39e-03    1(0)     0.3
     23   2.70e-02   2.05e-01  -9.05e-03    1(0)     0.4
     24   2.38e-02   2.15e-01  -3.19e-03    2(0)     0.7
     25   1.99e-02   1.01e-01  -3.86e-03    1(0)     0.3
     26   1.78e-02   9.93e-02  -2.16e-03    1(0)     0.3
     27   1.51e-02   1.25e-01  -2.66e-03    1(0)     0.3
-    28   1.24e-02   1.62e-01  -2.66e-03    1(0)     0.4
+    28   1.24e-02   1.62e-01  -2.66e-03    1(0)     0.3
     29   9.81e-03   7.46e-02  -2.63e-03    1(0)     0.3
-    30   8.35e-03   7.97e-02  -1.47e-03    1(0)     0.3
-    31   6.35e-03   1.03e-01  -1.99e-03    1(0)     0.3
-    32   4.71e-03   1.59e-01  -1.64e-03    1(0)     0.3
-    33   3.51e-03   9.26e-02  -1.20e-03    1(0)     0.3
-    34   2.80e-03   5.79e-02  -7.10e-04    1(0)     0.3
-    35   2.25e-03   6.23e-02  -5.45e-04    1(0)     0.3
-    36   1.89e-03   5.80e-02  -3.66e-04    1(0)     0.3
-    37   1.23e-03   5.28e-02  -6.62e-04    1(0)     0.3
-    38   6.91e-04   5.09e-02  -5.36e-04    1(0)     0.3
+    30   8.35e-03   7.98e-02  -1.47e-03    1(0)     0.3
+    31   6.36e-03   1.04e-01  -1.99e-03    1(0)     0.3
+    32   4.78e-03   1.66e-01  -1.58e-03    1(0)     0.3
+    33   3.55e-03   8.87e-02  -1.24e-03    1(0)     0.3
+    34   2.85e-03   5.84e-02  -6.97e-04    1(0)     0.3
+    35   2.27e-03   6.32e-02  -5.82e-04    1(0)     0.3
+    36   1.91e-03   5.91e-02  -3.57e-04    1(0)     0.3
+    37   1.24e-03   4.89e-02  -6.69e-04    1(0)     0.3
+    38   7.00e-04   5.03e-02  -5.41e-04    1(0)     0.3
 
 </code></pre><pre><code class="language-julia hljs">opt_result</code></pre><pre><code class="nohighlight hljs">GRAPE Optimization Result
 -------------------------
-- Started at 2024-01-17T16:35:19.164
-- Number of objectives: 4
+- Started at 2024-01-23T19:33:57.027
+- Number of trajectories: 4
 - Number of iterations: 38
 - Number of pure func evals: 0
 - Number of func/grad evals: 43
-- Value of functional: 6.91035e-04
+- Value of functional: 6.99924e-04
 - Reason for termination: J_T &lt; 10⁻³
-- Ended at 2024-01-17T16:35:40.392 (21 seconds, 228 milliseconds)
+- Ended at 2024-01-23T19:34:14.478 (17 seconds, 451 milliseconds)
 </code></pre><p>We extract the optimized control field from the optimization result and plot the resulting amplitude.</p><p>The <code>optimized_controls</code> field of the <code>opt_results</code> contains the optimized controls <span>$ϵ(t)$</span>.</p><pre><code class="language-julia hljs">ϵ_opt = opt_result.optimized_controls[1] + 𝕚 * opt_result.optimized_controls[2];</code></pre><p>These must still be multiplied by the static shape <span>$S(t)$</span> that we set up for the guess amplitudes</p><pre><code class="language-julia hljs">Ω_opt = ϵ_opt .* discretize(Ωre_guess.shape, tlist)
 
 fig = plot_complex_pulse(tlist, Ω_opt)</code></pre><p><img src="perfect_entanglers-50.png" alt/></p><p>We then propagate the optimized control field to analyze the resulting quantum gate:</p><pre><code class="language-julia hljs">using QuantumControl.Controls: get_controls, substitute
 
-opt_states = propagate_objectives(
+opt_states = propagate_trajectories(
     substitute(
-        objectives,
-        IdDict(zip(get_controls(objectives), opt_result.optimized_controls))
+        trajectories,
+        IdDict(zip(get_controls(trajectories), opt_result.optimized_controls))
     ),
     tlist;
     method=Cheby,
     use_threads=true
-);</code></pre><p>The resulting gate is</p><pre><code class="language-julia hljs">U_opt = [basis[i] ⋅ opt_states[j] for i = 1:4, j = 1:4];</code></pre><p>and we can verify the resulting fidelity</p><pre><code class="language-julia hljs">(abs(tr(U_opt&#39; * SQRTISWAP)) / 4)^2</code></pre><pre><code class="nohighlight hljs">0.9993089645810492</code></pre><h2 id="Optimizing-for-a-general-perfect-entangler"><a class="docs-heading-anchor" href="#Optimizing-for-a-general-perfect-entangler">Optimizing for a general perfect entangler</a><a id="Optimizing-for-a-general-perfect-entangler-1"></a><a class="docs-heading-anchor-permalink" href="#Optimizing-for-a-general-perfect-entangler" title="Permalink"></a></h2><p>We define the optimization with one objective for each of the four basis states:</p><pre><code class="language-julia hljs">objectives = [Objective(; initial_state=Ψ, generator=H) for Ψ ∈ basis];</code></pre><p>Note that we omit the <code>target_state</code> here. This is because we will be optimizing for an arbitrary perfect entangler, not for a specific quantum gate. Thus, there is no a-priori known target state to which the initial state must evolve.</p><p>The optimization is steered by the perfect entanglers distance measure <span>$D_{PE}$</span>, that is, the geometric distance of the quantum gate obtained from propagating the four basis states to the polyhedron of perfect entanglers in the Weyl chamber. Since the logical subspace defining the qubit is embedded in the larger Hilbert space of the transmon, there may be loss of population from the logical subspace. To counter this possibility in the optimization, we add a unitarity measure  to <span>$D_{PE}$</span>. The two terms are added with equal weight.</p><pre><code class="language-julia hljs">using TwoQubitWeylChamber: D_PE, gate_concurrence, unitarity
+);</code></pre><p>The resulting gate is</p><pre><code class="language-julia hljs">U_opt = [basis[i] ⋅ opt_states[j] for i = 1:4, j = 1:4];</code></pre><p>and we can verify the resulting fidelity</p><pre><code class="language-julia hljs">(abs(tr(U_opt&#39; * SQRTISWAP)) / 4)^2</code></pre><pre><code class="nohighlight hljs">0.9993000761444893</code></pre><h2 id="Optimizing-for-a-general-perfect-entangler"><a class="docs-heading-anchor" href="#Optimizing-for-a-general-perfect-entangler">Optimizing for a general perfect entangler</a><a id="Optimizing-for-a-general-perfect-entangler-1"></a><a class="docs-heading-anchor-permalink" href="#Optimizing-for-a-general-perfect-entangler" title="Permalink"></a></h2><p>We define the optimization with one trajectory for each of the four basis states:</p><pre><code class="language-julia hljs">trajectories = [Trajectory(; initial_state=Ψ, generator=H) for Ψ ∈ basis];</code></pre><p>Note that we omit the <code>target_state</code> here. This is because we will be optimizing for an arbitrary perfect entangler, not for a specific quantum gate. Thus, there is no a-priori known target state to which the initial state must evolve.</p><p>The optimization is steered by the perfect entanglers distance measure <span>$D_{PE}$</span>, that is, the geometric distance of the quantum gate obtained from propagating the four basis states to the polyhedron of perfect entanglers in the Weyl chamber. Since the logical subspace defining the qubit is embedded in the larger Hilbert space of the transmon, there may be loss of population from the logical subspace. To counter this possibility in the optimization, we add a unitarity measure  to <span>$D_{PE}$</span>. The two terms are added with equal weight.</p><pre><code class="language-julia hljs">using TwoQubitWeylChamber: D_PE, gate_concurrence, unitarity
 using QuantumControl.Functionals: gate_functional
 
-J_T_PE = gate_functional(D_PE; unitarity_weight=0.5);</code></pre><p>The <code>gate_functional</code> routines used above converts the function <code>D_PE</code> that receives the gate <span>$Û$</span> as a 4×4 matrix into a functional of the correct from for the <code>QuantumControl.optimize</code> routine, which is a function of the propagated states.</p><p>We can check that for the guess pulse, we are not implementing a perfect entangler</p><pre><code class="language-julia hljs">gate_concurrence(U_guess)</code></pre><pre><code class="nohighlight hljs">0.7773116198516767</code></pre><p>We find that the guess pulse produces a gate in the <code>W0*</code> region of the Weyl chamber:</p><pre><code class="language-julia hljs">using TwoQubitWeylChamber: weyl_chamber_region
-weyl_chamber_region(U_guess)</code></pre><pre><code class="nohighlight hljs">&quot;W0*&quot;</code></pre><p>That is, the region of the Weyl chamber containing controlled-phase gates with a phase <span>$&gt; π$</span> (Weyl chamber coordinates <span>$c₁ &gt; π/2$</span>, <span>$c₂ &lt; π/4$</span>).</p><p>This in fact allows use to use the perfect entangler functional without modification: if the guess pulse were in the &quot;W1&quot; region of the Weyl chamber, (close to SWAP), we would have to flip its sign, or we would optimize towards the local equivalence class of the SWAP gate instead of towards the perfect of perfect entanglers. In principle, we could use a modified functional that takes the absolute square of the <code>D_PE</code> term, by using</p><pre><code class="nohighlight hljs">J_T_PE = gate_functional(D_PE; unitarity_weight=0.5, absolute_square=true)</code></pre><p>This would specifically optimize for the <em>surface</em> of the perfect entanglers functional.</p><p>The guess pulse loses about 10% of population from the logical subspace:</p><pre><code class="language-julia hljs">1 - unitarity(U_guess)</code></pre><pre><code class="nohighlight hljs">0.09071664593827622</code></pre><p>We can also evaluate the geometric distance to the polyhedron of perfect entanglers in the Weyl chamber:</p><pre><code class="language-julia hljs">D_PE(U_guess)</code></pre><pre><code class="nohighlight hljs">0.7787454222382404</code></pre><p>Together with the unitarity measure, this is the initial value of the optimization functional:</p><pre><code class="language-julia hljs">0.5 * D_PE(U_guess) + 0.5 * (1 - unitarity(U_guess))</code></pre><pre><code class="nohighlight hljs">0.4347310340882583</code></pre><pre><code class="language-julia hljs">J_T_PE(guess_states, objectives)</code></pre><pre><code class="nohighlight hljs">0.4347310340882583</code></pre><p>For the standard functional <code>J_T_sm</code> used in the previous section, our GRAPE was able to automatically use an analytic implementation of the gradient. For the perfect-entanglers functional, an analytic gradient exist, but is very cumbersome to implement. Instead, we make use of semi-automatic differentiation. As shown in Goerz et al., arXiv:2205.15044, by evaluating the gradient via a chain rule in the propagated states, the dependency of the gradient on the final time functional is pushed into the boundary condition for the backward propagation, <span>$|χ_k⟩ = -∂J_T/∂⟨ϕ_k|$</span>. We can further exploit that <code>J_T</code> is an explicit function of the two-qubit gate in the computational basis and use a chain rule with respect to the elements of the two-qubit gate <span>$U_{kk&#39;}$</span>. The remaining derivatives <span>$∂J_T/∂U_{kk&#39;}$</span> are then obtained via automatic differentiation. This is set up via the <code>make_gate_chi</code> function,</p><pre><code class="language-julia hljs">using QuantumControl.Functionals: make_gate_chi
-chi_pe = make_gate_chi(D_PE, objectives; unitarity_weight=0.5);</code></pre><p>where the resulting <code>chi_pe</code> must be passed to the optimization.</p><p>Now, we formulate the full control problem</p><pre><code class="language-julia hljs">problem = ControlProblem(
-    objectives=objectives,
-    tlist=tlist,
+J_T_PE = gate_functional(D_PE; unitarity_weight=0.5);</code></pre><p>The <code>gate_functional</code> routines used above converts the function <code>D_PE</code> that receives the gate <span>$Û$</span> as a 4×4 matrix into a functional of the correct from for the <code>QuantumControl.optimize</code> routine, which is a function of the propagated states.</p><p>We can check that for the guess pulse, we are not implementing a perfect entangler</p><pre><code class="language-julia hljs">gate_concurrence(U_guess)</code></pre><pre><code class="nohighlight hljs">0.7773116198523763</code></pre><p>We find that the guess pulse produces a gate in the <code>W0*</code> region of the Weyl chamber:</p><pre><code class="language-julia hljs">using TwoQubitWeylChamber: weyl_chamber_region
+weyl_chamber_region(U_guess)</code></pre><pre><code class="nohighlight hljs">&quot;W0*&quot;</code></pre><p>That is, the region of the Weyl chamber containing controlled-phase gates with a phase <span>$&gt; π$</span> (Weyl chamber coordinates <span>$c₁ &gt; π/2$</span>, <span>$c₂ &lt; π/4$</span>).</p><p>This in fact allows use to use the perfect entangler functional without modification: if the guess pulse were in the &quot;W1&quot; region of the Weyl chamber, (close to SWAP), we would have to flip its sign, or we would optimize towards the local equivalence class of the SWAP gate instead of towards the perfect of perfect entanglers. In principle, we could use a modified functional that takes the absolute square of the <code>D_PE</code> term, by using</p><pre><code class="nohighlight hljs">J_T_PE = gate_functional(D_PE; unitarity_weight=0.5, absolute_square=true)</code></pre><p>This would specifically optimize for the <em>surface</em> of the perfect entanglers functional.</p><p>The guess pulse loses about 10% of population from the logical subspace:</p><pre><code class="language-julia hljs">1 - unitarity(U_guess)</code></pre><pre><code class="nohighlight hljs">0.09071664593745976</code></pre><p>We can also evaluate the geometric distance to the polyhedron of perfect entanglers in the Weyl chamber:</p><pre><code class="language-julia hljs">D_PE(U_guess)</code></pre><pre><code class="nohighlight hljs">0.7787454222357695</code></pre><p>Together with the unitarity measure, this is the initial value of the optimization functional:</p><pre><code class="language-julia hljs">0.5 * D_PE(U_guess) + 0.5 * (1 - unitarity(U_guess))</code></pre><pre><code class="nohighlight hljs">0.4347310340866146</code></pre><pre><code class="language-julia hljs">J_T_PE(guess_states, trajectories)</code></pre><pre><code class="nohighlight hljs">0.4347310340866146</code></pre><p>For the standard functional <code>J_T_sm</code> used in the previous section, our GRAPE was able to automatically use an analytic implementation of the gradient. For the perfect-entanglers functional, an analytic gradient exist, but is very cumbersome to implement. Instead, we make use of semi-automatic differentiation. As shown in Goerz et al., arXiv:2205.15044, by evaluating the gradient via a chain rule in the propagated states, the dependency of the gradient on the final time functional is pushed into the boundary condition for the backward propagation, <span>$|χ_k⟩ = -∂J_T/∂⟨ϕ_k|$</span>. We can further exploit that <code>J_T</code> is an explicit function of the two-qubit gate in the computational basis and use a chain rule with respect to the elements of the two-qubit gate <span>$U_{kk&#39;}$</span>. The remaining derivatives <span>$∂J_T/∂U_{kk&#39;}$</span> are then obtained via automatic differentiation. This is set up via the <code>make_gate_chi</code> function,</p><pre><code class="language-julia hljs">using Zygote
+QuantumControl.set_default_ad_framework(Zygote)
+
+using QuantumControl.Functionals: make_gate_chi
+chi_pe = make_gate_chi(D_PE, trajectories; unitarity_weight=0.5);</code></pre><pre><code class="nohighlight hljs">[ Info: QuantumControl: Setting Zygote as the default provider for automatic differentiation. This determines the default `automatic` setting for `QuantumControl.Functionals.make_chi`, `QuantumControl.Functionals.make_gate_chi`, and `QuantumControl.Functionals.make_grad_J_a`
+[ Info: make_gate_chi for J_T_U=D_PE: automatic with Zygote
+</code></pre><p>where the resulting <code>chi_pe</code> must be passed to the optimization.</p><p>Now, we formulate the full control problem</p><pre><code class="language-julia hljs">problem = ControlProblem(
+    trajectories,
+    tlist;
     iter_stop=100,
     prop_method=Cheby,
     J_T=J_T_PE,
@@ -231,82 +245,83 @@ chi_pe = make_gate_chi(D_PE, objectives; unitarity_weight=0.5);</code></pre><p>w
         )
     end,
     use_threads=true,
-);</code></pre><p>With this, we can easily find a solution to the control problem:</p><pre><code class="language-julia hljs">opt_result = @optimize_or_load(datadir(&quot;GRAPE_PE_OCT.jld2&quot;), problem; method=:GRAPE);</code></pre><pre><code class="nohighlight hljs">[ Info: Set callback to store result in /storage/goerz/nobackup/QuantumControlExamples.jl/examples/perfect_entanglers/GRAPE_PE_OCT.jld2 on unexpected exit.
+);</code></pre><p>With this, we can easily find a solution to the control problem:</p><pre><code class="language-julia hljs">opt_result = @optimize_or_load(datadir(&quot;GRAPE_PE_OCT.jld2&quot;), problem; method=GRAPE);</code></pre><pre><code class="nohighlight hljs">[ Info: Set callback to store result in /net/storage/mgoerz/QuantumControlExamples.jl/examples/perfect_entanglers/GRAPE_PE_OCT.jld2 on unexpected exit.
  iter.        J_T     |∇J_T|       ΔJ_T   FG(F)    secs
-     0   4.35e-01   3.92e-01        n/a    1(0)     1.2
+     0   4.35e-01   3.92e-01        n/a    1(0)     1.7
      1   3.35e-01   7.52e-01  -9.94e-02    1(0)     0.4
      2   1.69e-01   3.19e-01  -1.67e-01    1(0)     0.4
      3   1.43e-01   2.09e-01  -2.59e-02    1(0)     0.4
      4   1.00e-01   2.24e-01  -4.24e-02    1(0)     0.3
-     5   5.72e-02   2.60e-01  -4.33e-02    2(0)     0.6
+     5   5.72e-02   2.60e-01  -4.33e-02    2(0)     0.7
      6   4.96e-02   5.41e-01  -7.51e-03    1(0)     0.3
      7   7.82e-03   1.82e-01  -4.18e-02    1(0)     0.3
      8  -4.26e-03   1.13e-01  -1.21e-02    1(0)     0.3
 
 </code></pre><pre><code class="language-julia hljs">opt_result</code></pre><pre><code class="nohighlight hljs">GRAPE Optimization Result
 -------------------------
-- Started at 2024-01-17T16:36:04.139
-- Number of objectives: 4
+- Started at 2024-01-23T19:34:34.880
+- Number of trajectories: 4
 - Number of iterations: 8
 - Number of pure func evals: 0
 - Number of func/grad evals: 10
 - Value of functional: -4.25769e-03
 - Reason for termination: Found a perfect entangler
-- Ended at 2024-01-17T16:36:08.509 (4 seconds, 370 milliseconds)
+- Ended at 2024-01-23T19:34:39.780 (4 seconds, 900 milliseconds)
 </code></pre><p>We extract the optimized control field from the optimization result and plot it</p><pre><code class="language-julia hljs">ϵ_opt = opt_result.optimized_controls[1] + 𝕚 * opt_result.optimized_controls[2]
 Ω_opt = ϵ_opt .* discretize(Ωre_guess.shape, tlist)
 
-fig = plot_complex_pulse(tlist, Ω_opt)</code></pre><p><img src="perfect_entanglers-86.png" alt/></p><p>We then propagate the optimized control field to analyze the resulting quantum gate:</p><pre><code class="language-julia hljs">opt_states = propagate_objectives(
+fig = plot_complex_pulse(tlist, Ω_opt)</code></pre><p><img src="perfect_entanglers-86.png" alt/></p><p>We then propagate the optimized control field to analyze the resulting quantum gate:</p><pre><code class="language-julia hljs">opt_states = propagate_trajectories(
     substitute(
-        objectives,
-        IdDict(zip(get_controls(objectives), opt_result.optimized_controls))
+        trajectories,
+        IdDict(zip(get_controls(trajectories), opt_result.optimized_controls))
     ),
     tlist;
     method=Cheby,
     use_threads=true
 );
 
-U_opt = [basis[i] ⋅ opt_states[j] for i = 1:4, j = 1:4];</code></pre><p>We find that we have achieved a perfect entangler:</p><pre><code class="language-julia hljs">gate_concurrence(U_opt)</code></pre><pre><code class="nohighlight hljs">1.0</code></pre><p>Moreover, we have reduced the population loss to less than 4%</p><pre><code class="language-julia hljs">1 - unitarity(U_opt)</code></pre><pre><code class="nohighlight hljs">0.035261694562481294</code></pre><h2 id="Direct-maximization-of-the-gate-concurrence"><a class="docs-heading-anchor" href="#Direct-maximization-of-the-gate-concurrence">Direct maximization of the gate concurrence</a><a id="Direct-maximization-of-the-gate-concurrence-1"></a><a class="docs-heading-anchor-permalink" href="#Direct-maximization-of-the-gate-concurrence" title="Permalink"></a></h2><p>In the previous optimizations, we have optimized for a perfect entangler indirectly via a geometric function in the Weyl chamber. The entire reason that perfect entangler functional was formulated is because calculating the gate concurrence directly involves the eigenvalues of the unitary, see <a href="../../references/#KrausPRA2001">Kraus and Cirac [3]</a> and <a href="../../references/#ChildsPRA2003">Childs <em>et al.</em> [4]</a>, which are inherently non-analytic.</p><p>However, since we are able to obtain gradient from automatic differentiation, this is no longer an insurmountable obstacle</p><p>We can define a functional for a given gate <code>U</code> that combines the gate concurrence and (as above) a unitarity measure to penalize loss of population from the logical subspace:</p><pre><code class="language-julia hljs">J_T_C(U) = 0.5 * (1 - gate_concurrence(U)) + 0.5 * (1 - unitarity(U));</code></pre><p>In the optimization, we will convert this functional to one that takes the propagated states as arguments (via the <code>gate_functional</code> routine). Also, as before, we have to create a matching routine for the boundary condition <span>$|χ_k⟩ = -\frac{∂}{∂⟨ϕ_k|} J_T$</span> of the backward-propagation via the <code>make_gate_chi</code> routine.</p><p>Running this, we again are able to find a perfect entangler.</p><pre><code class="language-julia hljs">opt_result_direct = @optimize_or_load(
+U_opt = [basis[i] ⋅ opt_states[j] for i = 1:4, j = 1:4];</code></pre><p>We find that we have achieved a perfect entangler:</p><pre><code class="language-julia hljs">gate_concurrence(U_opt)</code></pre><pre><code class="nohighlight hljs">1.0</code></pre><p>Moreover, we have reduced the population loss to less than 4%</p><pre><code class="language-julia hljs">1 - unitarity(U_opt)</code></pre><pre><code class="nohighlight hljs">0.03526169455870842</code></pre><h2 id="Direct-maximization-of-the-gate-concurrence"><a class="docs-heading-anchor" href="#Direct-maximization-of-the-gate-concurrence">Direct maximization of the gate concurrence</a><a id="Direct-maximization-of-the-gate-concurrence-1"></a><a class="docs-heading-anchor-permalink" href="#Direct-maximization-of-the-gate-concurrence" title="Permalink"></a></h2><p>In the previous optimizations, we have optimized for a perfect entangler indirectly via a geometric function in the Weyl chamber. The entire reason that perfect entangler functional was formulated is because calculating the gate concurrence directly involves the eigenvalues of the unitary, see <a href="../../references/#KrausPRA2001">Kraus and Cirac [3]</a> and <a href="../../references/#ChildsPRA2003">Childs <em>et al.</em> [4]</a>, which are inherently non-analytic.</p><p>However, since we are able to obtain gradient from automatic differentiation, this is no longer an insurmountable obstacle</p><p>We can define a functional for a given gate <code>U</code> that combines the gate concurrence and (as above) a unitarity measure to penalize loss of population from the logical subspace:</p><pre><code class="language-julia hljs">J_T_C(U) = 0.5 * (1 - gate_concurrence(U)) + 0.5 * (1 - unitarity(U));</code></pre><p>In the optimization, we will convert this functional to one that takes the propagated states as arguments (via the <code>gate_functional</code> routine). Also, as before, we have to create a matching routine for the boundary condition <span>$|χ_k⟩ = -\frac{∂}{∂⟨ϕ_k|} J_T$</span> of the backward-propagation via the <code>make_gate_chi</code> routine.</p><p>Running this, we again are able to find a perfect entangler.</p><pre><code class="language-julia hljs">opt_result_direct = @optimize_or_load(
     datadir(&quot;GRAPE_PE_OCT_direct.jld2&quot;),
     problem;
-    method=:GRAPE,
+    method=GRAPE,
     J_T=gate_functional(J_T_C),
-    chi=make_gate_chi(J_T_C, objectives)
-);</code></pre><pre><code class="nohighlight hljs">[ Info: Set callback to store result in /storage/goerz/nobackup/QuantumControlExamples.jl/examples/perfect_entanglers/GRAPE_PE_OCT_direct.jld2 on unexpected exit.
+    chi=make_gate_chi(J_T_C, trajectories)
+);</code></pre><pre><code class="nohighlight hljs">[ Info: make_gate_chi for J_T_U=J_T_C: automatic with Zygote
+[ Info: Set callback to store result in /net/storage/mgoerz/QuantumControlExamples.jl/examples/perfect_entanglers/GRAPE_PE_OCT_direct.jld2 on unexpected exit.
  iter.        J_T     |∇J_T|       ΔJ_T   FG(F)    secs
-     0   1.57e-01   1.42e-01        n/a    1(0)     1.2
-     1   1.46e-01   3.18e-01  -1.05e-02    1(0)     0.4
-     2   1.30e-01   2.86e-01  -1.61e-02    1(0)     0.4
-     3   8.10e-02   2.10e-01  -4.91e-02    2(0)     0.7
-     4   7.66e-02   3.79e-01  -4.41e-03    1(0)     0.3
-     5   4.89e-02   1.87e-01  -2.77e-02    1(0)     0.3
-     6   2.64e-02   2.11e-01  -2.25e-02    1(0)     0.3
-     7   7.54e-03   1.09e-01  -1.89e-02    1(0)     0.4
-     8   5.86e-03   1.98e-01  -1.68e-03    1(0)     0.7
-     9   3.00e-03   4.01e-02  -2.87e-03    1(0)     0.4
-    10   2.71e-03   2.72e-02  -2.88e-04    1(0)     0.4
-    11   2.21e-03   2.82e-02  -5.01e-04    1(0)     0.4
-    12   1.42e-03   2.46e-02  -7.84e-04    1(0)     0.4
-    13   3.24e-04   2.83e-02  -1.10e-03    1(0)     0.4
+     0   1.57e-01   1.42e-01        n/a    1(0)     0.9
+     1   1.46e-01   3.18e-01  -1.05e-02    1(0)     0.5
+     2   1.30e-01   2.86e-01  -1.61e-02    1(0)     0.5
+     3   8.10e-02   2.10e-01  -4.91e-02    2(0)     1.1
+     4   7.66e-02   3.79e-01  -4.41e-03    1(0)     0.4
+     5   4.89e-02   1.87e-01  -2.77e-02    1(0)     0.4
+     6   2.64e-02   2.11e-01  -2.25e-02    1(0)     0.5
+     7   7.54e-03   1.09e-01  -1.89e-02    1(0)     0.6
+     8   5.86e-03   1.98e-01  -1.68e-03    1(0)     0.8
+     9   3.00e-03   4.01e-02  -2.87e-03    1(0)     0.6
+    10   2.71e-03   2.72e-02  -2.88e-04    1(0)     0.6
+    11   2.21e-03   2.82e-02  -5.01e-04    1(0)     0.6
+    12   1.42e-03   2.46e-02  -7.84e-04    1(0)     0.6
+    13   3.24e-04   2.83e-02  -1.10e-03    1(0)     0.7
 
 </code></pre><pre><code class="language-julia hljs">opt_result_direct</code></pre><pre><code class="nohighlight hljs">GRAPE Optimization Result
 -------------------------
-- Started at 2024-01-17T16:36:20.139
-- Number of objectives: 4
+- Started at 2024-01-23T19:34:51.944
+- Number of trajectories: 4
 - Number of iterations: 13
 - Number of pure func evals: 0
 - Number of func/grad evals: 15
 - Value of functional: 3.24322e-04
 - Reason for termination: Found a perfect entangler
-- Ended at 2024-01-17T16:36:26.910 (6 seconds, 771 milliseconds)
-</code></pre><pre><code class="language-julia hljs">opt_states_direct = propagate_objectives(
+- Ended at 2024-01-23T19:35:00.814 (8 seconds, 870 milliseconds)
+</code></pre><pre><code class="language-julia hljs">opt_states_direct = propagate_trajectories(
     substitute(
-        objectives,
-        IdDict(zip(get_controls(objectives), opt_result_direct.optimized_controls))
+        trajectories,
+        IdDict(zip(get_controls(trajectories), opt_result_direct.optimized_controls))
     ),
     tlist;
     method=Cheby,
     use_threads=true
 );
 
-U_opt_direct = [basis[i] ⋅ opt_states_direct[j] for i = 1:4, j = 1:4];</code></pre><pre><code class="language-julia hljs">gate_concurrence(U_opt_direct)</code></pre><pre><code class="nohighlight hljs">1.0</code></pre><pre><code class="language-julia hljs">1 - unitarity(U_opt_direct)</code></pre><pre><code class="nohighlight hljs">0.0006486436943351492</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../simple_state_to_state/">« Optimization of a State-to-State Transfer in a Two-Level-System</a><a class="docs-footer-nextpage" href="../rho_3states/">Optimization of a Dissipative Quantum Gate »</a><div class="flexbox-break"></div><p class="footer-message"><a href="https://github.com/JuliaQuantumControl/QuantumControlExamples.jl">JuliaQuantumControl Tutorials and Examples</a> powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Thursday 18 January 2024 03:16">Thursday 18 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+U_opt_direct = [basis[i] ⋅ opt_states_direct[j] for i = 1:4, j = 1:4];</code></pre><pre><code class="language-julia hljs">gate_concurrence(U_opt_direct)</code></pre><pre><code class="nohighlight hljs">1.0</code></pre><pre><code class="language-julia hljs">1 - unitarity(U_opt_direct)</code></pre><pre><code class="nohighlight hljs">0.0006486436924157957</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../simple_state_to_state/">« Optimization of a State-to-State Transfer in a Two-Level-System</a><a class="docs-footer-nextpage" href="../rho_3states/">Optimization of a Dissipative Quantum Gate »</a><div class="flexbox-break"></div><p class="footer-message"><a href="https://github.com/JuliaQuantumControl/QuantumControlExamples.jl">JuliaQuantumControl Tutorials and Examples</a> powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Tuesday 23 January 2024 21:54">Tuesday 23 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -140,9 +140,9 @@ display(fig) #src
 
 # ## Optimization target
 
-# The `krotov` package requires the goal of the optimization to be described by a
-# list of `Objective` instances. In this example, there is only a single
-# objective: the state-to-state transfer from initial state $\ket{\Psi_{\init}} =
+# The `Krotov` package requires the optimization to be expressed over a set of
+# "trajectories". In this example, there is only a single
+# trajectory: the state-to-state transfer from initial state $\ket{\Psi_{\init}} =
 # \ket{0}$ to the target state $\ket{\Psi_{\tgt}} = \ket{1}$, under the dynamics
 # of the Hamiltonian $\op{H}(t)$:
 
@@ -155,10 +155,10 @@ end;
 @test dot(ket(0), ket(1)) ≈ 0 #src
 #-
 
-objectives = [Objective(initial_state=ket(0), generator=H, target_state=ket(1))]
+trajectories = [Trajectory(ket(0), H, target_state=ket(1))]
 
 #-
-@test length(objectives) == 1 #src
+@test length(trajectories) == 1 #src
 #-
 
 
@@ -188,7 +188,7 @@ display(fig) #src
 
 #-
 problem = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ => a)),
+    trajectories=substitute(trajectories, IdDict(ϵ => a)),
     prop_method=ExpProp,
     lambda_a=5,
     update_shape=(t -> flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -200,10 +200,11 @@ problem = ControlProblem(
     end
 );
 #-
+using Krotov
 opt_result_positive = @optimize_or_load(
     datadir("parametrization#opt_result_positive.jld2"),
     problem;
-    method=:krotov
+    method=Krotov
 );
 #-
 opt_result_positive
@@ -237,7 +238,7 @@ a = ParametrizedAmplitude(
 )
 
 problem_tanhsq = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ => a)),
+    trajectories=substitute(trajectories, IdDict(ϵ => a)),
     prop_method=ExpProp,
     lambda_a=10,
     update_shape=(t -> flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -252,7 +253,7 @@ problem_tanhsq = ControlProblem(
 opt_result_tanhsq = @optimize_or_load(
     datadir("parametrization#opt_result_tanhsq.jld2"),
     problem_tanhsq;
-    method=:krotov
+    method=Krotov
 );
 #-
 opt_result_tanhsq
@@ -287,7 +288,7 @@ a = ParametrizedAmplitude(
 )
 
 problem_logisticsq = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ => a)),
+    trajectories=substitute(trajectories, IdDict(ϵ => a)),
     prop_method=ExpProp,
     lambda_a=1,
     update_shape=(t -> flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -302,7 +303,7 @@ problem_logisticsq = ControlProblem(
 opt_result_logisticsq = @optimize_or_load(
     datadir("parametrization#opt_result_logisticsq.jld2"),
     problem_logisticsq;
-    method=:krotov
+    method=Krotov
 );
 # We can plot the optimized field:
 
@@ -333,7 +334,7 @@ a = ParametrizedAmplitude(
 )
 
 problem_tanh = ControlProblem(
-    objectives=substitute(objectives, IdDict(ϵ => a)),
+    trajectories=substitute(trajectories, IdDict(ϵ => a)),
     prop_method=ExpProp,
     lambda_a=1,
     update_shape=(t -> flattop(t, T=5, t_rise=0.3, func=:blackman)),
@@ -348,7 +349,7 @@ problem_tanh = ControlProblem(
 opt_result_tanh = @optimize_or_load(
     datadir("parametrization#opt_result_tanh.jld2"),
     problem_tanh;
-    method=:krotov
+    method=Krotov
 );
 #-
 fig = plot_amplitude(

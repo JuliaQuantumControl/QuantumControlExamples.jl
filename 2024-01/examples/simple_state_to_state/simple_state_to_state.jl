@@ -117,18 +117,18 @@ using LinearAlgebra #src
 
 # The physical objective of our optimization is to transform the initial state $\ket{0}$ into the target state $\ket{1}$ under the time evolution induced by the Hamiltonian $\op{H}(t)$.
 
-objectives = [Objective(initial_state=ket(0), generator=H, target_state=ket(1))];
+trajectories = [Trajectory(initial_state=ket(0), generator=H, target_state=ket(1))];
 
 #-
-@test length(objectives) == 1 #src
+@test length(trajectories) == 1 #src
 #-
 
-# The full control problem includes this objective, information about the time grid for the dynamics, and the functional to be used (the square modulus of the overlap $\tau$ with the target state in this case).
+# The full control problem includes this trajectory, information about the time grid for the dynamics, and the functional to be used (the square modulus of the overlap $\tau$ with the target state in this case).
 
 using QuantumControl.Functionals: J_T_sm
 
 problem = ControlProblem(
-    objectives=objectives,
+    trajectories=trajectories,
     tlist=tlist,
     iter_stop=500,
     prop_method=ExpProp,
@@ -142,11 +142,11 @@ problem = ControlProblem(
 
 # ## Simulate dynamics under the guess field
 
-# Before running the optimization procedure, we first simulate the dynamics under the guess field $\epsilon_{0}(t)$. The following solves equation of motion for the defined objective, which contains the initial state $\ket{\Psi_{\init}}$ and the Hamiltonian $\op{H}(t)$ defining its evolution.
+# Before running the optimization procedure, we first simulate the dynamics under the guess field $\epsilon_{0}(t)$. The following solves equation of motion for the defined trajective, which contains the initial state $\ket{\Psi_{\init}}$ and the Hamiltonian $\op{H}(t)$ defining its evolution.
 
 
-guess_dynamics = propagate_objective(
-    objectives[1],
+guess_dynamics = propagate_trajectory(
+    trajectories[1],
     problem.tlist;
     method=ExpProp,
     storage=true,
@@ -170,6 +170,8 @@ display(fig) #src
 
 # The GRAPE package performs the optimization by calculating the gradient of $J_T$ with respect to the values of the control field at each point in time. This gradient is then fed into a backend solver that calculates an appropriate update based on that gradient.
 
+using GRAPE
+
 # By default, this backend is [LBFGSB.jl](https://github.com/Gnimuc/LBFGSB.jl), a wrapper around the true and tested [L-BFGS-B Fortran library](http://users.iems.northwestern.edu/%7Enocedal/lbfgsb.html). L-BFGS-B is a pseudo-Hessian method: it efficiently estimates the second-order Hessian from the gradient information. The search direction determined from that Hessian dramatically improves convergence compared to using the gradient directly as a search direction. The L-BFGS-B method performs its own linesearch to determine how far to go in the search direction.
 
 # It can be quite instructive to see how the improvement in the pseudo-Hessian search direction compares to the gradient, how the linesearch finds an appropriate step width. For this purpose, we have a [GRAPELinesearchAnalysis](https://github.com/JuliaQuantumControl/GRAPELinesearchAnalysis.jl) package that automatically generates plots in every iteration of the optimization showing the linesearch behavior
@@ -181,13 +183,12 @@ using GRAPELinesearchAnalysis
 opt_result_LBFGSB = @optimize_or_load(
     datadir("TLS", "GRAPE_opt_result_LBFGSB.jld2"),
     problem;
-    method=:grape,
+    method=GRAPE,
     prop_method=ExpProp,
-    force=true,
     info_hook=(
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "LBFGSB")), #md
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "LBFGSB")), #nb
-        QuantumControl.GRAPE.print_table,
+        GRAPE.print_table,
     )
 );
 #-
@@ -211,13 +212,21 @@ display(fig) #src
 
 # Our GRAPE implementation includes the analytic gradient of the optimization functional `J_T_sm`. Thus, we only had to pass the functional itself to the optimization. More generally, for functionals where the analytic gradient is not known, semi-automatic differentiation can be used to determine it automatically. For illustration, we may re-run the optimization forgoing the known analytic gradient and instead using an automatically determined gradient.
 
-# As shown in Goerz et al., arXiv:2205.15044, by evaluating the gradient of ``J_T`` via a chain rule in the propagated states, the dependency of the gradient on the final time functional is pushed into the boundary condition for the backward propagation, ``|χ_k⟩ = -∂J_T/∂⟨ϕ_k|``. For functionals that can be written in terms of the overlaps ``τ_k`` of the forward-propagated states and target states, such as the `J_T_sm` used here, a further chain rule leaves derivatives of `J_T` with respect to the overlaps ``τ_k``, which are easily obtained via automatic differentiation. This happens automatically if we use `make_chi` with `force_zygote=true` and pass the resulting `chi` to the optimization:
+# As shown in Goerz et al., arXiv:2205.15044, by evaluating the gradient of ``J_T`` via a chain rule in the propagated states, the dependency of the gradient on the final time functional is pushed into the boundary condition for the backward propagation, ``|χ_k⟩ = -∂J_T/∂⟨ϕ_k|``. For functionals that can be written in terms of the overlaps ``τ_k`` of the forward-propagated states and target states, such as the `J_T_sm` used here, a further chain rule leaves derivatives of `J_T` with respect to the overlaps ``τ_k``, which are easily obtained via automatic differentiation. The `optimize` function takes an optional parameter `chi` that may be passed a function to calculate ``|χ_k⟩``. A suitable function can be obained using
 
 using QuantumControl.Functionals: make_chi
 
-chi_sm = make_chi(J_T_sm, objectives; force_zygote=true)
+# To force `make_chi` to use automatic differentiation, we must first load a suitable AD framework
 
-opt_result_LBFGSB_via_χ = optimize(problem; method=:grape, chi=chi_sm);
+using Zygote
+
+# Then, we can pass `mode=:automatic` and `automatic=Zygote` to `make_chi`:
+
+chi_sm = make_chi(J_T_sm, trajectories; mode=:automatic, automatic=Zygote)
+
+# The resulting `chi_sm` can be used in the optimization:
+
+opt_result_LBFGSB_via_χ = optimize(problem; method=GRAPE, chi=chi_sm);
 #-
 opt_result_LBFGSB_via_χ
 
@@ -233,12 +242,11 @@ import LineSearches
 opt_result_OptimLBFGS = @optimize_or_load(
     datadir("TLS", "GRAPE_opt_result_OptimLBFGS.jld2"),
     problem;
-    method=:grape,
-    force=true,
+    method=GRAPE,
     info_hook=(
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "OptimLBFGS")), #md
         GRAPELinesearchAnalysis.plot_linesearch(datadir("TLS", "Linesearch", "OptimLBFGS")), #nb
-        QuantumControl.GRAPE.print_table,
+        GRAPE.print_table,
     ),
     optimizer=Optim.LBFGS(;
         alphaguess=LineSearches.InitialStatic(alpha=0.2),
@@ -269,8 +277,8 @@ display(fig) #src
 
 using QuantumControl.Controls: substitute
 
-opt_dynamics = propagate_objective(
-    substitute(objectives[1], IdDict(ϵ => opt_result_LBFGSB.optimized_controls[1])),
+opt_dynamics = propagate_trajectory(
+    substitute(trajectories[1], IdDict(ϵ => opt_result_LBFGSB.optimized_controls[1])),
     problem.tlist;
     method=ExpProp,
     storage=true,
