@@ -212,8 +212,6 @@ display(fig) #src
 # We now instantiate the Hamiltonian with these control fields:
 
 H = transmon_hamiltonian(Ωre=Ωre_guess, Ωim=Ωim_guess);
-#md nothing #hide
-#md H |> DisplayAs.withcontext(:limit => true) #hide
 
 # ## Logical basis for two-qubit gates
 
