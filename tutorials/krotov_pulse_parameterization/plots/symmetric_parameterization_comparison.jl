@@ -1,9 +1,9 @@
-using QuantumControl.PulseParametrizations:
-    SquareParametrization,
-    TanhParametrization,
-    TanhSqParametrization,
-    LogisticParametrization,
-    LogisticSqParametrization
+using QuantumControl.PulseParameterizations:
+    SquareParameterization,
+    TanhParameterization,
+    TanhSqParameterization,
+    LogisticParameterization,
+    LogisticSqParameterization
 
 using Plots
 Plots.default(
@@ -35,19 +35,19 @@ function plot_symmetric_parametrization_comparison()
     plot!(
         pnl1,
         u_vals,
-        TanhParametrization(ϵ_min, ϵ_max).a_of_epsilon.(u_vals),
+        TanhParameterization(ϵ_min, ϵ_max).a_of_epsilon.(u_vals),
         label="Tanh"
     )
     plot!(
         pnl1,
         u_vals,
-        LogisticParametrization(ϵ_min, ϵ_max).a_of_epsilon.(u_vals),
+        LogisticParameterization(ϵ_min, ϵ_max).a_of_epsilon.(u_vals),
         label="Logistic(k=1)"
     )
     plot!(
         pnl1,
         u_vals,
-        LogisticParametrization(ϵ_min, ϵ_max, k=4).a_of_epsilon.(u_vals),
+        LogisticParameterization(ϵ_min, ϵ_max, k=4).a_of_epsilon.(u_vals),
         label="Logistic(k=4)"
     )
     ylims!(pnl1, (-1.2, 1.2))
@@ -64,19 +64,19 @@ function plot_symmetric_parametrization_comparison()
     plot!(
         pnl2,
         ϵ_vals,
-        TanhParametrization(ϵ_min, ϵ_max).epsilon_of_a.(ϵ_vals),
+        TanhParameterization(ϵ_min, ϵ_max).epsilon_of_a.(ϵ_vals),
         label="Tanh"
     )
     plot!(
         pnl2,
         ϵ_vals,
-        LogisticParametrization(ϵ_min, ϵ_max).epsilon_of_a.(ϵ_vals),
+        LogisticParameterization(ϵ_min, ϵ_max).epsilon_of_a.(ϵ_vals),
         label="Logistic(k=1)"
     )
     plot!(
         pnl2,
         ϵ_vals,
-        LogisticParametrization(ϵ_min, ϵ_max, k=4).epsilon_of_a.(ϵ_vals),
+        LogisticParameterization(ϵ_min, ϵ_max, k=4).epsilon_of_a.(ϵ_vals),
         label="Logistic(k=4)"
     )
     ylims!(pnl2, (-3, 3))
@@ -94,19 +94,19 @@ function plot_symmetric_parametrization_comparison()
     plot!(
         pnl3,
         u_vals,
-        TanhParametrization(ϵ_min, ϵ_max).da_deps_derivative.(u_vals),
+        TanhParameterization(ϵ_min, ϵ_max).da_deps_derivative.(u_vals),
         label="Tanh"
     )
     plot!(
         pnl3,
         u_vals,
-        LogisticParametrization(ϵ_min, ϵ_max).da_deps_derivative.(u_vals),
+        LogisticParameterization(ϵ_min, ϵ_max).da_deps_derivative.(u_vals),
         label="Logistic(k=1)"
     )
     plot!(
         pnl3,
         u_vals,
-        LogisticParametrization(ϵ_min, ϵ_max, k=4).da_deps_derivative.(u_vals),
+        LogisticParameterization(ϵ_min, ϵ_max, k=4).da_deps_derivative.(u_vals),
         label="Logistic(k=4)"
     )
     ylims!(pnl3, (0, 2))

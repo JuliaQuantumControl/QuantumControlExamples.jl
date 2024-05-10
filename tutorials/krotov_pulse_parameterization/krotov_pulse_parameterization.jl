@@ -1,4 +1,4 @@
-# # Pulse Parametrization for Krotov's Method
+# # Pulse Parameterization for Krotov's Method
 
 #md # ``\gdef\op#1{\hat{#1}}``
 #md # ``\gdef\init{\text{init}}``
@@ -37,7 +37,7 @@
 
 #md import DisplayAs #hide
 
-# This example illustrates the parametrization of control pulses as a
+# This example illustrates the parameterization of control pulses as a
 # form of amplitude constraint.
 
 datadir(names...) = joinpath(@__DIR__, names...);
@@ -46,13 +46,13 @@ using QuantumControl
 using QuantumControl.Shapes: flattop
 using QuantumControl.Generators
 using QuantumControl.Controls
-using QuantumControl.PulseParametrizations:
-    SquareParametrization,
-    TanhParametrization,
-    TanhSqParametrization,
-    LogisticParametrization,
-    LogisticSqParametrization,
-    ParametrizedAmplitude
+using QuantumControl.PulseParameterizations:
+    SquareParameterization,
+    TanhParameterization,
+    TanhSqParameterization,
+    LogisticParameterization,
+    LogisticSqParameterization,
+    ParameterizedAmplitude
 using QuantumPropagators: ExpProp
 using LinearAlgebra
 
@@ -68,21 +68,21 @@ Plots.default(
 )
 #-
 
-# ## Parametrizations
+# ## Parameterizations
 
 # ## Symmetric Bounded Controls
 
 #-
-include(joinpath(@__DIR__, "plots", "symmetric_parametrization_comparison.jl"))  #hide
-fig = plot_symmetric_parametrization_comparison()  #hide
+include(joinpath(@__DIR__, "plots", "symmetric_parameterization_comparison.jl"))  #hide
+fig = plot_symmetric_parameterization_comparison()  #hide
 #md fig |> DisplayAs.PNG #hide
 display(fig) #src
 
 # ## Positive (Bounded) Controls
 
 #-
-include(joinpath(@__DIR__, "plots", "positive_parametrization_comparison.jl"))  #hide
-fig = plot_positive_parametrization_comparison()  #hide
+include(joinpath(@__DIR__, "plots", "positive_parameterization_comparison.jl"))  #hide
+fig = plot_positive_parameterization_comparison()  #hide
 #md fig |> DisplayAs.PNG #hide
 display(fig) #src
 
@@ -162,17 +162,17 @@ trajectories = [Trajectory(ket(0), H, target_state=ket(1))]
 #-
 
 
-# ## Square-parametrization for positive pulses
+# ## Square-parameterization for positive pulses
 
-a = ParametrizedAmplitude(
+a = ParameterizedAmplitude(
     ϵ,
     tlist;
-    parametrization=SquareParametrization(),
+    parameterization=SquareParameterization(),
     parameterize=true
 )
 
 #-
-function plot_amplitude(ampl::ParametrizedAmplitude, tlist)
+function plot_amplitude(ampl::ParameterizedAmplitude, tlist)
     plot(
         tlist,
         discretize(Array(ampl), tlist),
@@ -202,7 +202,7 @@ problem = ControlProblem(
 #-
 using Krotov
 opt_result_positive = @optimize_or_load(
-    datadir("parametrization#opt_result_positive.jld2"),
+    datadir("parameterization#opt_result_positive.jld2"),
     problem;
     method=Krotov
 );
@@ -228,12 +228,12 @@ amplitude = #src
 @test maximum(amplitude) > 0.0 #src
 #-
 
-# ## Tanh-Square-Parametrization for positive amplitude-constrained pulses
+# ## Tanh-Square-Parameterization for positive amplitude-constrained pulses
 
-a = ParametrizedAmplitude(
+a = ParameterizedAmplitude(
     ϵ,
     tlist;
-    parametrization=TanhSqParametrization(3),
+    parameterization=TanhSqParameterization(3),
     parameterize=true
 )
 
@@ -251,7 +251,7 @@ problem_tanhsq = ControlProblem(
 );
 #-
 opt_result_tanhsq = @optimize_or_load(
-    datadir("parametrization#opt_result_tanhsq.jld2"),
+    datadir("parameterization#opt_result_tanhsq.jld2"),
     problem_tanhsq;
     method=Krotov
 );
@@ -278,12 +278,12 @@ amplitude = #src
 @test maximum(opt_result_tanhsq.optimized_controls[1]) < 3.0 #src
 #-
 
-# ## Logistic-Square-Parametrization for positive amplitude-constrained pulses
+# ## Logistic-Square-Parameterization for positive amplitude-constrained pulses
 
-a = ParametrizedAmplitude(
+a = ParameterizedAmplitude(
     ϵ,
     tlist;
-    parametrization=LogisticSqParametrization(3, k=1.0),
+    parameterization=LogisticSqParameterization(3, k=1.0),
     parameterize=true
 )
 
@@ -301,7 +301,7 @@ problem_logisticsq = ControlProblem(
 );
 #-
 opt_result_logisticsq = @optimize_or_load(
-    datadir("parametrization#opt_result_logisticsq.jld2"),
+    datadir("parameterization#opt_result_logisticsq.jld2"),
     problem_logisticsq;
     method=Krotov
 );
@@ -324,12 +324,12 @@ amplitude = #src
 @test maximum(amplitude) > 0.0 #src
 @test maximum(amplitude) < 3.0 #src
 #-
-# ## Tanh-parametrization for amplitude-constrained pulses
+# ## Tanh-parameterization for amplitude-constrained pulses
 
-a = ParametrizedAmplitude(
+a = ParameterizedAmplitude(
     ϵ,
     tlist;
-    parametrization=TanhParametrization(-0.5, 0.5),
+    parameterization=TanhParameterization(-0.5, 0.5),
     parameterize=true
 )
 
@@ -347,7 +347,7 @@ problem_tanh = ControlProblem(
 );
 #-
 opt_result_tanh = @optimize_or_load(
-    datadir("parametrization#opt_result_tanh.jld2"),
+    datadir("parameterization#opt_result_tanh.jld2"),
     problem_tanh;
     method=Krotov
 );
