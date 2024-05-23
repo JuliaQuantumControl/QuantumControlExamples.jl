@@ -1,0 +1,7 @@
+title = "Optimization of a State-to-State Transfer in a Two-Level-System"
+tags = ["grape", "optimization", "quantum computing"]
+author = "Michael Goerz"
+file = "simple_state_to_state.jl"
+deploy = ["*.png"]
+order = 101
+threads = 1
