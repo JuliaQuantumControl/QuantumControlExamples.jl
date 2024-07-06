@@ -1,9 +1,9 @@
-using QuantumControl.PulseParametrizations:
-    SquareParametrization,
-    TanhParametrization,
-    TanhSqParametrization,
-    LogisticParametrization,
-    LogisticSqParametrization
+using QuantumControl.PulseParameterizations:
+    SquareParameterization,
+    TanhParameterization,
+    TanhSqParameterization,
+    LogisticParameterization,
+    LogisticSqParameterization
 
 using Plots
 Plots.default(
@@ -14,7 +14,7 @@ Plots.default(
     background_color_legend = RGBA(1, 1, 1, 0.8),
 )
 
-function plot_positive_parametrization_comparison()
+function plot_positive_parameterization_comparison()
 
     u_vals = collect(range(-3, 3, length=101))
     ϵ_vals = collect(range(0, 1, length=101))
@@ -30,20 +30,20 @@ function plot_positive_parametrization_comparison()
         ylabel="ϵ",
         legend=false
     )
-    plot!(pnl1, u_vals, TanhSqParametrization(ϵ_max).a_of_epsilon.(u_vals), label="TanhSq")
+    plot!(pnl1, u_vals, TanhSqParameterization(ϵ_max).a_of_epsilon.(u_vals), label="TanhSq")
     plot!(
         pnl1,
         u_vals,
-        LogisticSqParametrization(ϵ_max).a_of_epsilon.(u_vals),
+        LogisticSqParameterization(ϵ_max).a_of_epsilon.(u_vals),
         label="LogisticSq(k=1)"
     )
     plot!(
         pnl1,
         u_vals,
-        LogisticSqParametrization(ϵ_max, k=4.0).a_of_epsilon.(u_vals),
+        LogisticSqParameterization(ϵ_max, k=4.0).a_of_epsilon.(u_vals),
         label="LogisticSq(k=4)"
     )
-    plot!(pnl1, u_vals, SquareParametrization().a_of_epsilon.(u_vals), label="Square")
+    plot!(pnl1, u_vals, SquareParameterization().a_of_epsilon.(u_vals), label="Square")
     ylims!(pnl1, (0, 1.2))
 
     pnl2 = plot(
@@ -55,20 +55,20 @@ function plot_positive_parametrization_comparison()
         xlabel="ϵ",
         ylabel="u"
     )
-    plot!(pnl2, ϵ_vals, TanhSqParametrization(ϵ_max).epsilon_of_a.(ϵ_vals), label="TanhSq")
+    plot!(pnl2, ϵ_vals, TanhSqParameterization(ϵ_max).epsilon_of_a.(ϵ_vals), label="TanhSq")
     plot!(
         pnl2,
         ϵ_vals,
-        LogisticSqParametrization(ϵ_max).epsilon_of_a.(ϵ_vals),
+        LogisticSqParameterization(ϵ_max).epsilon_of_a.(ϵ_vals),
         label="LogisticSq(k=1)"
     )
     plot!(
         pnl2,
         ϵ_vals,
-        LogisticSqParametrization(ϵ_max, k=4.0).epsilon_of_a.(ϵ_vals),
+        LogisticSqParameterization(ϵ_max, k=4.0).epsilon_of_a.(ϵ_vals),
         label="LogisticSq(k=4)"
     )
-    plot!(pnl2, ϵ_vals, SquareParametrization().epsilon_of_a.(ϵ_vals), label="Square")
+    plot!(pnl2, ϵ_vals, SquareParameterization().epsilon_of_a.(ϵ_vals), label="Square")
     ylims!(pnl2, (0, 3))
 
     pnl3 = plot(
@@ -84,22 +84,27 @@ function plot_positive_parametrization_comparison()
     plot!(
         pnl3,
         u_vals,
-        TanhSqParametrization(ϵ_max).da_deps_derivative.(u_vals),
+        TanhSqParameterization(ϵ_max).da_deps_derivative.(u_vals),
         label="TanhSq"
     )
     plot!(
         pnl3,
         u_vals,
-        LogisticSqParametrization(ϵ_max).da_deps_derivative.(u_vals),
+        LogisticSqParameterization(ϵ_max).da_deps_derivative.(u_vals),
         label="LogisticSq(k=1)"
     )
     plot!(
         pnl3,
         u_vals,
-        LogisticSqParametrization(ϵ_max, k=4.0).da_deps_derivative.(u_vals),
+        LogisticSqParameterization(ϵ_max, k=4.0).da_deps_derivative.(u_vals),
         label="LogisticSq(k=4)"
     )
-    plot!(pnl3, u_vals, SquareParametrization().da_deps_derivative.(u_vals), label="Square")
+    plot!(
+        pnl3,
+        u_vals,
+        SquareParameterization().da_deps_derivative.(u_vals),
+        label="Square"
+    )
     ylims!(pnl3, (-2, 2))
 
     plot(
@@ -115,6 +120,6 @@ function plot_positive_parametrization_comparison()
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    gui(plot_positive_parametrization_comparison())
+    gui(plot_positive_parameterization_comparison())
     readline()
 end
