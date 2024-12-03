@@ -48,6 +48,8 @@ datadir(names...) = joinpath(@__DIR__, names...);
 using QuantumControl
 using LinearAlgebra
 using Serialization
+using AppleAccelerate #hide
+
 using SparseArrays
 #-
 using Plots

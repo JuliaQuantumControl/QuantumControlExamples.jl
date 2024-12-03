@@ -142,6 +142,7 @@ function run_example(
             @info "skip converting `$(_shrinkuser(file))` to .ipynb file (up to date)."
         else
             _run(_script_run_notebook(folder); threads)
+            run(`jupyter trust $nbfile`; wait=true)
         end
     end
 end

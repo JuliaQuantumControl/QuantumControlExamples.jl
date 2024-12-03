@@ -55,6 +55,7 @@ using QuantumControl.PulseParameterizations:
     ParameterizedAmplitude
 using QuantumPropagators: ExpProp
 using LinearAlgebra
+using AppleAccelerate #hide
 
 #-
 using Test #src

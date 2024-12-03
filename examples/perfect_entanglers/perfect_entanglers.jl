@@ -41,6 +41,7 @@
 #md import DisplayAs #hide
 datadir(names...) = joinpath(@__DIR__, names...);
 using Test #src
+using AppleAccelerate #hide
 
 # This example illustrates the optimization towards a perfectly entangling
 # two-qubit gate for a system of two transmon qubits with a shared transmission
