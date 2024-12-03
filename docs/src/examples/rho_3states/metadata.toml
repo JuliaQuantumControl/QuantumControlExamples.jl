@@ -1,0 +1,7 @@
+title = "Optimization of a Dissipative Quantum Gate"
+tags = ["krotov", "optimization", "quantum computing"]
+author = "Michael Goerz"
+file = "rho_3states.jl"
+deploy = ["*.png"]
+threads = 3
+order = 103
